@@ -20,7 +20,7 @@
         <a href="/patient/{{ptmp}}" class="list-group-item">{{ptmp}}</a>
         {% endif %}
         {% endfor %}
-      </div> 
+      </div>
     </div>
   </div>
   <!-- patient content -->
@@ -44,18 +44,18 @@
         <h4 class="pagetitle"><span class="glyphicon glyphicon-user"></span> Patient {{pname}}</h4>
       </div>
     </div>
-    <!-- already expanded panels --> 
+    <!-- already expanded panels -->
     <div class="panel-group">
       <!-- INTRO -->
       <div class="panel tab-panel">
-        <div class="panel-heading tab"> 
+        <div class="panel-heading tab">
           <span class="glyphicon glyphicon-question-sign"></span>&nbsp;
           <a data-toggle="collapse" href="#Intro">Introduction</a>
         </div>
         <div id="Intro" class="panel-collapse collapse in">
           <div class="panel-body">
             <div class="text-explanation">
-              <!-- Intro text -->  
+              <!-- Intro text -->
               {% include ["snippets/intro_"+pname+".html", "snippets/introPatient.html"] ignore missing %}
             </div>
           </div>
@@ -64,7 +64,7 @@
       <!-- INTRO -->
       <!-- SUMMARY -->
       <div class="panel tab-panel">
-        <div class="panel-heading tab"> 
+        <div class="panel-heading tab">
           <span class="glyphicon glyphicon-info-sign"></span>&nbsp;
           <a data-toggle="collapse" href="#Sum">Summary</a>
         </div>
@@ -93,12 +93,12 @@
             </div>
           </div>
         </div>
-      </div>    
+      </div>
       <!-- SUMMARY -->
       <!-- PHYSIO -->
-      <div class="panel tab-panel"> 
+      <div class="panel tab-panel">
         <div class="panel-heading tab">
-          <img width="18" src="../../static/images/icons/viral_load.svg"> 
+          <img width="18" src="../../static/images/icons/viral_load.svg">
           <a data-toggle="collapse" href="#viral">Viral load and CD4+ counts</a>
         </div>
         <div id="viral" class="panel-collapse collapse in">
@@ -112,9 +112,9 @@
       </div>
       <!-- END PHYSIO -->
       <!-- TREE -->
-      <div class="panel tab-panel"> 
+      <div class="panel tab-panel">
         <div class="panel-heading tab">
-          <img width="18" src="../../static/images/icons/tree.svg"> 
+          <img width="18" src="../../static/images/icons/tree.svg">
           <a data-toggle="collapse" href="#tree" name="phylo">Phylogenetic trees</a>
         </div>
         <div id="tree" class="panel-collapse collapse in">
@@ -146,7 +146,7 @@
                   {% else %}
                   <option>{{region}}</option>
                   {% endif %}
-                  {% endfor %} 
+                  {% endfor %}
                 </select>
               </div>
             </div>
@@ -158,7 +158,7 @@
       </div>
       <!-- END TREE -->
       <!-- DIV DIV -->
-      <div class="panel tab-panel"> 
+      <div class="panel tab-panel">
         <div class="panel-heading tab">
           <img width="18" src="../../static/images/icons/diversity.svg">
           <a data-toggle="collapse" href="#divDiv" name="diver">Genetic divergence and diversity in specific regions</a>
@@ -178,7 +178,7 @@
                   {% else %}
                   <option>{{region}}</option>
                   {% endif %}
-                  {% endfor %} 
+                  {% endfor %}
                 </select>
               </div>
             </div>
@@ -188,7 +188,7 @@
       </div>
       <!-- END DIV DIV -->
       <!-- DIV DIV LOCAL -->
-      <div class="panel tab-panel"> 
+      <div class="panel tab-panel">
         <div class="panel-heading tab">
           <img width="18" src="../../static/images/icons/divdiv_local.svg">
           <a data-toggle="collapse" href="#divDivLocal">Genome wide divergence and diversity patterns</a>
@@ -204,7 +204,7 @@
       </div>
       <!-- END DIV DIV LOCAL -->
       <!-- COVERAGE -->
-      <div class="panel tab-panel"> 
+      <div class="panel tab-panel">
         <div class="panel-heading tab">
           <img width="18" src="../../static/images/icons/coverage.svg">
           <a data-toggle="collapse" href="#cov" name="cover">Coverage</a>
@@ -220,7 +220,7 @@
       </div>
       <!-- END COVERAGE -->
       <!-- ALLELE FREQUENCIES -->
-      <div class="panel tab-panel"> 
+      <div class="panel tab-panel">
         <div class="panel-heading tab">
           <img width="18" src="../../static/images/icons/allele_frequencies.svg">
           <a data-toggle="collapse" href="#allFreq" name="snp">Frequency dynamics of single nucleotide polymorphisms</a>
@@ -236,9 +236,9 @@
       </div>
       <!-- END ALLELE FREQUENCIES -->
       <!-- GENOME SEQUENCE -->
-      <div class="panel tab-panel"> 
+      <div class="panel tab-panel">
         <div class="panel-heading tab">
-          <img width="18" src="../../static/images/icons/genome.svg"> 
+          <img width="18" src="../../static/images/icons/genome.svg">
           <a data-toggle="collapse" href="#genome">Genome sequence</a>
         </div>
         <div id="genome" class="panel-collapse collapse">
@@ -253,9 +253,9 @@
       </div>
       <!-- END GENOME SEQUENCE -->
       <!-- BEGIN CONSENSUS SEQUENCES -->
-      <div class="panel tab-panel"> 
+      <div class="panel tab-panel">
         <div class="panel-heading tab">
-          <img width="18" src="../../static/images/icons/consensi.svg"> 
+          <img width="18" src="../../static/images/icons/consensi.svg">
           <a data-toggle="collapse" href="#consensus">Consensus sequences</a>
         </div>
         <div id="consensus" class="panel-collapse collapse">
@@ -273,7 +273,7 @@
       </div>
       <!-- END CONSENSUS SEQUENCES -->
       <!-- HAPLOTYPES -->
-      <div class="panel tab-panel"> 
+      <div class="panel tab-panel">
         <div class="panel-heading tab">
           <img width="18" src="../../static/images/icons/haplotype_frequencies.svg">
           <a data-toggle="collapse" href="#haplo" name="types">Local haplotypes</a>
@@ -343,7 +343,7 @@ function loadGenome(id, pname) {
       'genome': genome,
       'pname': pname,
     };
-    updateGenome(id, data);  
+    updateGenome(id, data);
   });
 }
 </script>
@@ -366,7 +366,7 @@ function loadTree(id, pname, region) {
 <script type="text/javascript">
 function loadDivDiv(id, pname, region) {
   d3.json("/api/data/divdiv/"+pname+"/"+region, function(error, divdiv) {
-    updateDivDiv(id, divdiv);  
+    updateDivDiv(id, divdiv);
   });
 }
 </script>
@@ -398,8 +398,8 @@ function loadCoverage(id, pname) {
         data['genome'] = genome;
         data['ntemplates'] = nTemplates;
         updateCoverage(id, data);
-      });    
-    });  
+      });
+    });
   });
 }
 </script>
@@ -415,8 +415,8 @@ function loadAlleleFrequencies(id, pname) {
         data['genome'] = genome;
         data['ntemplates'] = nTemplates;
         updateAlleleFrequencies(id, data);
-      });    
-    });  
+      });
+    });
   });
 }
 </script>
@@ -523,7 +523,7 @@ $('#switchRadial').on('click', function () {
   $('#switchRectangular').removeClass('active');
   $(this).addClass('active');
   updateTree("treeSvg");
-});   
+});
 $('#switchColorLinkBlack').on('click', function () {
   $('#switchColorLinkDate').removeClass('active');
   $(this).addClass('active');
@@ -535,5 +535,5 @@ $('#switchColorLinkDate').on('click', function () {
   updateTree("treeSvg");
 });
 </script>
-   
+
 {% endblock %}
