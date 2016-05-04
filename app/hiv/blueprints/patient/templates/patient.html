@@ -14,9 +14,9 @@
       </div>
       <div class="list-group">
         {% for ptmp in config['PATIENTS'] %}
-        {% if ptmp == pname and ptmp!='p4'%} <!-- exclude p4 -->
+        {% if ptmp == pname%} <!-- exclude p4 -->
         <a href="/patient/{{ptmp}}" class="list-group-item active">{{ptmp}}</a>
-        {% elif ptmp!='p4' %} <!-- exclude p4 -->
+        {% else %}
         <a href="/patient/{{ptmp}}" class="list-group-item">{{ptmp}}</a>
         {% endif %}
         {% endfor %}

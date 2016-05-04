@@ -36,7 +36,7 @@ class TreeModel(object):
 
         return data_folder[full]+'trees/'+fn
 
-    
+
     def get_newick_string(self):
         fn = self.get_filename(format='newick')
         with open(fn, 'r') as f:
@@ -170,7 +170,7 @@ class GenomeModel(object):
 
     def get_data(self):
         seq = self.get_genome()
-        
+
         features = []
         frame_start = 0
         for fea in seq.features:
@@ -388,7 +388,7 @@ class AlleleFrequencyTrajectoryModel(object):
 
                 times_set |= set(times[ind])
 
-            
+
         data = {'data': aft,
                 'tmax': times.max(),
                 'times': sorted(times_set),
@@ -496,7 +496,7 @@ class LocalHaplotypeModel(object):
     def get_local_haplotype_filename(self, full=True):
         '''Get the filename of a temporary file with the haplotype data'''
         import random
-        
+
         from . import hiv
         tmp_root_folder = hiv.config['TMP_ROOT_FOLDER']
 
@@ -599,18 +599,18 @@ class LocalHaplotypeModel(object):
         file_formats = {'stk': 'stockholm',
                         'fasta': 'fasta',
                         'phy': 'phylip-relaxed'}
-    
+
         foldername = os.path.dirname(filename)
         if not os.path.isdir(foldername):
             raise IOError('Destination folder for file save not found')
-    
+
         if os.path.isfile(filename):
             raise IOError('Destination file already exists on file system')
-    
+
         file_format = filename.split('.')[-1]
         if file_format in file_formats:
             AlignIO.write(ali, filename, file_format)
-    
+
         else:
             raise ValueError('File format not recognized')
 
@@ -627,7 +627,7 @@ class LocalHaplotypeModel(object):
 
         times = np.loadtxt(self.get_timeline_filename())
 
-        fragment, start, end = self.roi 
+        fragment, start, end = self.roi
 
         ali = []
         for i_time in xrange(len(times)):
@@ -727,7 +727,7 @@ class PatientTableModel(object):
 
     def get_table_filename(self, full=True, format='tsv'):
         '''Get the filename of the patient table'''
-        fn = 'patients.'+format
+        fn = 'patients_extended.'+format
         return data_folder[full]+'tables/'+fn
 
 
@@ -740,7 +740,7 @@ class PatientTableModel(object):
         with open(fn, 'r') as f:
             headerfields = f.readline().rstrip('\n').split('\t')
             for field in headerfields:
-                fieldinds.append(field) 
+                fieldinds.append(field)
 
             # Second header line, empty
             f.readline()
@@ -752,7 +752,6 @@ class PatientTableModel(object):
                     continue
                 tline = {fieldinds[ifi]: field for ifi, field in enumerate(fieldsline)}
                 table.append(tline)
-
         return table
 
 
@@ -818,7 +817,7 @@ class SampleTableModel(object):
                             if datafmt < 1000:
                                 datafmt = '{:2d}'.format(datafmt)
                             else:
-                                datafmt = '{:2d} 000'.format(datafmt // 1000)                        
+                                datafmt = '{:2d} 000'.format(datafmt // 1000)
 
                     # Date is in integer days
                     elif field == 'time':
