@@ -1,15 +1,19 @@
 <table class="table">
   <thead>
     <tr class="centerhead">
-      <th class="leftcol">Years after start of therapy</th>
-      <th class="leftcol" colspan="1">DNA templates</th>
+      <th class="leftcol">Sample</th>
+      <th class="leftcol" colspan="1">years on treatment</th>
+      <th class="leftcol" colspan="1">good reads</th>
+      <th class="leftcol" colspan="1">hypermutated</th>
     </tr>
   </thead>
   <tbody>
-    {% for row in sampleTableDNA %}
+    {% for row in DNASampleTable %}
     <tr class="numbers">
-      <td class="leftcol">{{row.time}}</td>
-      <td class="leftcol">{{row.DNA}}</td>
+      <td class="leftcol">{{row.sample}}</td>
+      <td class="leftcol">{{row.years}}</td>
+      <td class="leftcol"><a href="/download/{{row.good}}">reads</a></td>
+      <td class="leftcol"><a href="/download/{{row.hyper}}">reads</a></td>
     </tr>
     {% endfor %}
   </tbody>

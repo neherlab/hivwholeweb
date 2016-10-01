@@ -881,3 +881,52 @@ class HLAModel(object):
         fn = fn+'_'+self.pname+'.'+format
         return data_folder[full]+'hla/'+fn
 
+
+class DNASampleTableModel(object):
+    def __init__(self, pname):
+        self.pname = pname
+
+
+    def get_table_filename(self, full=True, format='tsv'):
+        '''Get the filename of the samples table'''
+        fn = 'DNA_samples'
+        fn = fn+'_'+self.pname+'.'+format
+        return data_folder[full]+'cell_data/'+fn
+
+
+    def get_table(self, fields=['sample', 'years', 'good', 'hyper']):
+        '''Read the sample table from file'''
+        fn = self.get_table_filename(full=True)
+
+        table = []
+        fieldinds = {}
+        with open(fn, 'r') as f:
+            headerfields = f.readline().rstrip('\n').split('\t')
+            for iff, field in enumerate(headerfields):
+                if field == 'years since start of treatment':
+                    field = 'years'
+                elif field == 'good reads':
+                    field = 'good'
+                elif field == 'hypermutated reads':
+                    field = 'hyper'
+
+                if field in fields:
+                    fieldinds[iff] = field
+
+            for line in f:
+                tline = {}
+                fieldsline = line.rstrip('\n').split('\t')
+                if len(fieldsline) == 0:
+                    continue
+
+                for ifi, datum in enumerate(fieldsline):
+                    if ifi not in fieldinds:
+                        continue
+
+                    field = fieldinds[ifi]
+                    datafmt = str(datum)
+                    tline[field] = datafmt
+                table.append(tline)
+
+        return table
+

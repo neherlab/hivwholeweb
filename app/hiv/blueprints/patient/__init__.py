@@ -8,7 +8,7 @@ content:    Blueprint for the patient page.
 from flask import (Blueprint, render_template, abort, request,
                    redirect, flash, make_response)
 from ...models import (PatientTableModel, SampleTableModel,
-                       LocalHaplotypeModel)
+                       LocalHaplotypeModel, DNASampleTableModel)
 from .forms import RoiForm, PrecompiledHaplotypeForm, ConsensiForm
 
 
@@ -96,11 +96,13 @@ def index(pname):
 
     patient_table = PatientTableModel().get_table()
     sample_table = SampleTableModel(pname).get_table()
+    DNA_sample_table = DNASampleTableModel(pname).get_table()
 
     return render_template('patient.html',
                            pname=pname,
-                           patientTable=patient_table, 
+                           patientTable=patient_table,
                            sampleTable=sample_table,
+                           DNASampleTable=DNA_sample_table,
                            formco=formco,
                            formpc=formpc,
                            formht=formht,

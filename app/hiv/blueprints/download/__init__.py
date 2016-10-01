@@ -35,7 +35,7 @@ download = Blueprint('download', __name__,
 def data_proxy(path):
     def send_static_file(fn):
         '''Send static files
-        
+
         NOTE: hiv.send_static_file will guess the MIME type from the
         extension of this URL (!!)
         '''
@@ -57,6 +57,7 @@ def data_proxy(path):
     else:
         fmt = None
 
+    print(fields)
     # Switch by data type
     # TREES
     if dtype == 'tree':
@@ -128,7 +129,7 @@ def data_proxy(path):
 
         from ...models import HaplotypePrecompiledTrajectoryModel
         fn = (HaplotypePrecompiledTrajectoryModel(pname, region)
-              .get_haplotype_filename(full=False, format=fmt)) 
+              .get_haplotype_filename(full=False, format=fmt))
         return send_static_file(fn)
 
 
@@ -182,6 +183,18 @@ def data_proxy(path):
         pname = fields[0]
         from ...models import SampleTableModel
         fn = SampleTableModel(pname).get_table_filename(full=False, format=fmt)
+        return send_static_file(fn)
+
+    # DNA reads
+    elif dtype == 'DNA':
+        if len(fields) < 3:
+            abort(404)
+        pname = fields[0]
+        read_type = fields[1]
+        sample = fields[2]
+        from ...models import DNASampleTableModel
+        fn = '/static/data/cell_data/'+'_'.join(['DNA', pname, read_type, sample]) + '.gz'
+        print(fn)
         return send_static_file(fn)
 
 

@@ -321,6 +321,40 @@
         </div>
       </div>
       <!-- END HAPLOTYPES -->
+
+      <!-- CELL DATA -->
+      <div class="panel tab-panel">
+        <div class="panel-heading tab">
+          <img width="18" src="../../static/images/icons/tcell.svg">
+          <a data-toggle="collapse" href="#cell" name="types">Proviral DNA from PBMCs</a>
+        </div>
+        <div id="cell" class="panel-collapse collapse">
+          <div class="panel-body">
+            <!-- Summary content -->
+            <div class="row">
+              <div class="col-xs-6" style="min-width:350px">
+                <dl class="dl-horizontal">
+                  {% for row in patientTable %}
+                  {% if row['Patient'] == pname %}
+                    PBMC samples available for patient {{pname}}
+                  {% endif %}
+                  {% endfor %}
+                </dl>
+                <!-- SAMPLE TABLE -->
+                {% include "snippets/sampleTableDNA.html" %}
+                <div class="text-explanation">{% include "snippets/summaryPatientDNA.html" ignore missing %}</div>
+                <!-- END SAMPLE TABLE -->
+              </div>
+              <div class="col-xs-6"  style="min-width:300px">
+                <p class="caption">Tree of <b>p17</b> before (RNA) and on treatment (DNA).</p>
+                <img src='/static/data/cell_trees/tree_{{pname}}_p17.svg' style="max-width:100%; max-height:100%">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- CELL DATA -->
+
     </div>
   </div>
 </div>
