@@ -22,7 +22,7 @@
   <!-- BANNER -->
   <!-- INTRO -->
   <div class="panel tab-panel">
-    <div class="panel-heading tab bottom-border"> 
+    <div class="panel-heading tab bottom-border">
       Introduction
     </div>
     {% include "snippets/introData.html" ignore missing %}
@@ -30,7 +30,7 @@
   <!-- INTRO -->
   <!-- SUMMARY -->
   <div class="panel tab-panel">
-    <div class="panel-heading tab bottom-border"> 
+    <div class="panel-heading tab bottom-border">
       Clinical and summary data
     </div>
     <div class="panel-body">
@@ -43,7 +43,7 @@
   <!-- SUMMARY -->
   <!-- HAPLOTYPES -->
   <div class="panel tab-panel">
-    <div class="panel-heading tab bottom-border"> 
+    <div class="panel-heading tab bottom-border">
       Haplotypes
     </div>
     <div class="panel-body">
@@ -93,23 +93,26 @@
   <!-- HAPLOTYPES -->
   <!-- READS -->
   <div class="panel tab-panel">
-    <div class="panel-heading tab bottom-border"> 
+    <div class="panel-heading tab bottom-border">
       Sequencing Reads
     </div>
     <div class="panel-body">
       <!-- TABS FOR PATIENT READS -->
       <ul class="nav nav-tabs">
         {% for datum in data %}
+        {% if datum.pname in config['PATIENTS'] %}
         {% if datum.pname == "p1" %}
         <li class="active"><a data-toggle="tab" href="#reads{{datum.pname}}">{{datum.pname}}</a></li>
         {% else %}
         <li><a data-toggle="tab" href="#reads{{datum.pname}}">{{datum.pname}}</a></li>
         {% endif %}
+        {% endif %}
         {% endfor %}
-      </ul> 
+      </ul>
       <!-- TABS FOR PATIENT READS -->
       <div class="tab-content">
         {% for datum in data %}
+        {% if datum.pname in config['PATIENTS'] %}
         {% if datum.pname == "p1" %}
         <div id="reads{{datum.pname}}" class="tab-pane fade in active">
         {% else %}
@@ -117,6 +120,7 @@
         {% endif %}
           {% include "snippets/readTable.html" ignore missing %}
         </div>
+        {% endif %}
         {% endfor %}
         <div class="text-explanation">
           {% include "snippets/readDownload.html" ignore missing %}
@@ -127,24 +131,27 @@
   <!-- READS -->
   <!-- COCOUNTS -->
   <div class="panel tab-panel">
-    <div class="panel-heading tab bottom-border"> 
+    <div class="panel-heading tab bottom-border">
       Counts of pairs of SNPs
     </div>
     <div class="panel-body">
       <!-- TABS FOR PATIENT COCOUNTS -->
       <ul class="nav nav-tabs">
         {% for datum in data %}
+        {% if datum.pname in config['PATIENTS'] %}
         {% if datum.pname == "p1" %}
         <li class="active"><a data-toggle="tab" href="#cocounts{{datum.pname}}">{{datum.pname}}</a></li>
         {% else %}
         <li><a data-toggle="tab" href="#cocounts{{datum.pname}}">{{datum.pname}}</a></li>
         {% endif %}
+        {% endif %}
         {% endfor %}
-      </ul> 
+      </ul>
       <!-- TABS FOR PATIENT COCOUNTS -->
 
       <div class="tab-content">
         {% for datum in data %}
+        {% if datum.pname in config['PATIENTS'] %}
         {% if datum.pname == "p1" %}
         <div id="cocounts{{datum.pname}}" class="tab-pane fade in active">
         {% else %}
@@ -152,6 +159,7 @@
         {% endif %}
           {% include "snippets/cocountTable.html" ignore missing %}
         </div>
+        {% endif %}
         {% endfor %}
         <div class="text-explanation">
           {% include "snippets/cocountDownload.html" ignore missing %}
@@ -163,7 +171,7 @@
 
   <!-- API -->
   <div class="panel tab-panel" id="api">
-    <div class="panel-heading tab bottom-border"> 
+    <div class="panel-heading tab bottom-border">
       API
     </div>
     <div class="panel-body">
