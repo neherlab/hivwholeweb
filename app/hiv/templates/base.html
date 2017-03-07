@@ -11,21 +11,18 @@
       <title>Intrapatient HIV evolution</title>
     {% endif %}
 
-    <!-- PIWIK -->
-    <script type="text/javascript">
-      var _paq = _paq || [];
-      _paq.push(['trackPageView']);
-      _paq.push(['enableLinkTracking']);
-      (function() {
-        var u=(("https:" == document.location.protocol) ? "https" : "http") + "://piwik.tuebingen.mpg.de/";
-        _paq.push(['setTrackerUrl', u+'piwik.php']);
-        _paq.push(['setSiteId', 18]);
-        var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0]; g.type='text/javascript';
-        g.defer=true; g.async=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
-      })();
-    </script>
-    <noscript><p><img src="http://piwik.tuebingen.mpg.de/piwik.php?idsite=18" style="border:0;" alt="" /></p></noscript>
-    <!-- PIWIK -->
+  <!-- tracking script from google analytics -->
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-60087408-4', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+  <!-- end tracking script -->
 
     <!-- Load everything in the HEAD even if it slows down a bit, then it's cached -->
     <script src="/static/components/jquery/dist/jquery.min.js"></script>
