@@ -5,7 +5,7 @@ date:       30/03/15
 content:    Forms for the patient blueprint.
 '''
 # Modules
-from flask.ext.wtf import Form
+from flask_wtf.form import FlaskForm as Form
 from wtforms import BooleanField, IntegerField, SelectField, FormField
 from wtforms.validators import Required
 

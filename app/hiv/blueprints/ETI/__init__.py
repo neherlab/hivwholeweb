@@ -23,7 +23,7 @@ ETI = Blueprint('ETI', __name__,
 def index():
     # Haplotype forms
     from ..method.forms import ETIForm
-    from ...models import LocalHaplotypeModel
+    from ...models import ETIModel
     form = ETIForm()
 
     if request.method == 'POST':
@@ -32,18 +32,18 @@ def index():
 
         elif form.validate_on_submit():
             # NOTE: we offer only genomewide HXB2 coordinates
-            region = 'genomewide'
-            pname = form.patient.data
-            start = form.roi.start.data - 1 #Inclusive coordinates
-            end = form.roi.end.data
-            roi = (region, start, end)
+            diversity = form.diversity.data
+            xc = form.xc.data
+            start = form.start.data - 1 #Inclusive coordinates
+            end = form.end.data
+            roi = (start, end)
 
-            hm = LocalHaplotypeModel(pname, roi)
+            hm = ETIModel(diversity, xc, roi)
             try:
-                hm.translate_coordinates()
-                cont = True
+                hm.print_input()
+                cont = False
             except ValueError:
-                flash('No PCR fragment covers such region, please select another region')
+                flash('Not quite there yet')
                 cont = False
 
             if cont:
@@ -66,6 +66,5 @@ def index():
 
     return render_template('ETI.html',
                            form=form,
-                           fragments=['F'+str(i) for i in xrange(1, 7)],
-                           title='Downloads',
+                           title='Time since Infection',
                           )

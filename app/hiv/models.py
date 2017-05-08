@@ -930,3 +930,13 @@ class DNASampleTableModel(object):
 
         return table
 
+
+
+class ETIModel(object):
+    def __init__(self, diversity, xc, roi):
+        self.diversity = diversity
+        self.xc = xc
+        self.roi = roi
+
+    def print_input(self):
+        print(self.diversity, self.roi, self.xc)

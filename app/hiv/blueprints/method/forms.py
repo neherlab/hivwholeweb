@@ -5,7 +5,7 @@ date:       12/12/14
 content:    Forms for the method blueprint.
 '''
 # Modules
-from flask.ext.wtf import Form
+from flask_wtf.form import FlaskForm as Form
 from wtforms import BooleanField, IntegerField, SelectField, FormField, FloatField
 from wtforms.validators import Required
 
