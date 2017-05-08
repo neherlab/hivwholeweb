@@ -6,7 +6,7 @@ content:    Forms for the method blueprint.
 '''
 # Modules
 from flask.ext.wtf import Form
-from wtforms import BooleanField, IntegerField, SelectField, FormField
+from wtforms import BooleanField, IntegerField, SelectField, FormField, FloatField
 from wtforms.validators import Required
 
 from ... import hiv
@@ -94,3 +94,27 @@ class RegionFragForm(Form):
                           choices=([['F'+str(i)] * 2 for i in xrange(1, 7)] +
                                    [[reg] *2 for reg in _regions]))
 
+
+class ETIForm(Form):
+    diversity = FloatField('Diversity')
+    xc = FloatField('Cutoff')
+
+    start = IntegerField('From')
+
+    end = IntegerField('To')
+
+    def validate(self):
+        start = self.start.data
+        end = self.end.data
+        diversity = self.diversity.data
+
+        if (start < 500) or (end < 500) or (end < start):
+            return False
+
+        if (start > 9800) or (end >9800):
+            return False
+
+        if diversity<0 or diversity>0.3:
+          return false
+
+        return True

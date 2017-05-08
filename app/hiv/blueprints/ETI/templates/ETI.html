@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container" style="padding:20px">
+  <!-- FLASHED MESSAGES -->
+  {% with messages = get_flashed_messages() %}
+  {% if messages %}
+  <div class="alert alert-danger" role="alert">
+    {% for message in messages %}
+    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+    <span class="sr-only">Error: </span>{{ message }}
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% endwith %}
+  <!-- FLASHED MESSAGES -->
+  <!-- BANNER -->
+  <div class="panel header-panel">
+    <div class="panel-body">
+      <h4 class="pagetitle"><span class="glyphicon glyphicon-download-alt"></span> Data access</h4>
+    </div>
+  </div>
+  <!-- BANNER -->
+  <!-- INTRO -->
+  <div class="panel tab-panel">
+    <div class="panel-heading tab bottom-border">
+      Introduction
+    </div>
+    {% include "snippets/introEDI.html" ignore missing %}
+  </div>
+  <!-- INTRO -->
+  <!-- HAPLOTYPES -->
+  <div class="panel tab-panel">
+    <div class="panel-heading tab bottom-border">
+      Enter HXB2 coordinates and diversity
+    </div>
+    <div class="panel-body">
+      <div class="col-md-5">
+        <div class="thumbnail">
+        </div>
+      </div>
+      <div class="col-md-7">
+        <div class="thumbnail">
+          <form role="form" action="" method="post" name="ETIFrom" style="padding:10px">
+            {{form.hidden_tag()}}
+            <p>Average Hamming distance with minor variant cutoff </p>
+            <div class="form-group">
+              {{form.diversity.label}}
+              {{form.diversity}}
+              {{form.xc.label}}
+              {{form.xc}}
+            </div><br>
+            <p>across HXB2 region:</p>
+            <br>
+            <div class="form-group">
+              {{form.start.label}}
+              {{form.start(size="5")}}
+              {{form.end.label}}
+              {{form.end(size="5")}}
+            </div>
+            <button type="submit" class="btn btn-default">Estimate Time since Infection</button>
+          </form>
+        </div>
+      </div>
+      <!-- put continuous text here if you need full width of haplo div -->
+    </div>
+  </div>
+</div>
+
+<!-- JavaScript loading at the end to not slow down page load -->
+<!-- <script type="text/javascript" src="/static/js/haplo.js"></script> -->
+
+{% endblock %}
