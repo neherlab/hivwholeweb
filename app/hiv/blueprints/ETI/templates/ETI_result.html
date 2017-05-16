@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container" style="padding:20px">
+  <!-- FLASHED MESSAGES -->
+  {% with messages = get_flashed_messages() %}
+  {% if messages %}
+  <div class="alert alert-danger" role="alert">
+    {% for message in messages %}
+    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+    <span class="sr-only">Error: </span>{{ message }}
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% endwith %}
+  <!-- FLASHED MESSAGES -->
+  <!-- BANNER -->
+  <div class="panel header-panel">
+    <div class="panel-body">
+      <h4 class="pagetitle"><span class="glyphicon glyphicon-download-alt"></span> Estimate time since infection from NGS diversity</h4>
+    </div>
+  </div>
+  <!-- BANNER -->
+  <!-- INTRO -->
+  <div class="panel tab-panel">
+    <div class="panel-heading tab bottom-border">
+      Introduction
+    </div>
+    {% include "snippets/introETI.html" ignore missing %}
+  </div>
+  <!-- INTRO -->
+  <!-- HAPLOTYPES -->
+  <div class="panel tab-panel">
+    <div class="panel-heading tab bottom-border">
+      Enter HXB2 coordinates and diversity
+    </div>
+    <div class="panel-body">
+      <div class="col-md-5">
+        <div class="thumbnail">
+        </div>
+      </div>
+      <div class="col-md-7">
+        <div class="thumbnail">
+          <form role="form" action="" method="post" name="ETIFrom" style="padding:10px">
+            {{form.hidden_tag()}}
+            <p>Average Hamming distance with minor variant cutoff </p>
+            <div class="form-group">
+              {{form.diversity.label}}
+              {{form.diversity}}
+              {{form.xc.label}}
+              {{form.xc}}
+            </div><br>
+            <p>across HXB2 region:</p>
+            <br>
+            <div class="form-group">
+              {{form.start.label}}
+              {{form.start(size="5")}}
+              {{form.end.label}}
+              {{form.end(size="5")}}
+            </div>
+            <button type="submit" class="btn btn-default">Estimate Time since Infection</button>
+          </form>
+        </div>
+      </div>
+      <!-- put continuous text here if you need full width of haplo div -->
+      <!-- DIVERSITY -->
+      <div class="panel tab-panel">
+        <div class="panel-heading tab">
+          <span class="glyphicon glyphicon-minus"></span>
+          <a data-toggle="collapse" data-parent="#expand" href="#diversity">Diversity</a>
+        </div>
+        <div id="diversity" class="panel-collapse collapse in" align="center">
+          <div class="panel-body">
+            <svg class="d3-plot" id="diversitySvg"></svg>
+          </div>
+        </div>
+        <div class="text-explanation">{% include "snippets/diversityRegion.html" ignore missing %}</div>
+      </div>
+      <!-- DIVERSITY -->
+    </div>
+  </div>
+</div>
+
+<!-- call this script when python is ready with the results of the calculation as result variable
+ -->
+<!-- JavaScript loading at the end to not slow down page load -->
+<!-- <script type="text/javascript" src="/static/js/haplo.js"></script> -->
+<script type="text/javascript" src="/static/js/divdivAll.js"></script>
+<script type="text/javascript">
+function loadDivsETI_result(id, dtype) {
+  console.log({{result|tojson}});
+  updateDivs(id, {{ result|tojson}}, dtype);
+}
+</script>
+
+<!-- load at page opening -->
+<script>
+loadDivsETI_result("diversitySvg", "ds");
+</script>
+
+{% endblock %}

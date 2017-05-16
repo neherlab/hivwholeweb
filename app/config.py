@@ -71,3 +71,8 @@ REGIONS_SNP = ['psi',
               ]
 
 REGIONS_TREE = REGIONS_SNP + [r+'_minor' for r in REGIONS_HAPLO]
+
+UPLOAD_FOLDER = TMP_ROOT_FOLDER + 'upload/'
+MAX_CONTENT_PATH = 1000000
+ALLOWED_EXTENSIONS = set(['tsv', 'csv', 'txt'])
+

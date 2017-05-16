@@ -115,6 +115,31 @@ class ETIForm(Form):
             return False
 
         if diversity<0 or diversity>0.3:
+          return False
+
+        return True
+
+
+class ETIFileForm(Form):
+    diversity = FloatField('Diversity')
+    xc = FloatField('Cutoff')
+
+    start = IntegerField('From')
+
+    end = IntegerField('To')
+
+    def validate(self):
+        start = self.start.data
+        end = self.end.data
+        diversity = self.diversity.data
+
+        if (start < 500) or (end < 500) or (end < start):
+            return False
+
+        if (start > 9800) or (end >9800):
+            return False
+
+        if diversity<0 or diversity>0.3:
           return false
 
         return True

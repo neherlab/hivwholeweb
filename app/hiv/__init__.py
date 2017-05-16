@@ -49,6 +49,9 @@ hiv.register_blueprint(download)
 from .blueprints.ETI import ETI
 hiv.register_blueprint(ETI)
 
+from .blueprints.ETI import ETI_result
+hiv.register_blueprint(ETI_result)
+
 
 # RESTful API
 from .blueprints.api import api_bp
