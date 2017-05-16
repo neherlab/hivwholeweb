@@ -129,8 +129,8 @@ function drawETI_diversity(id, data) {
         .enter()
         .append("g")
         .attr("class", function(d) { return "dataPlot "+d.label; })
-        .each(plotDotsLine)
-        .each(plotLegend);
+        .each(plotDotsLine);
+//        .each(plotLegend);
 
 
     function plotLegend(d, i) {
