@@ -10,7 +10,9 @@ content:    Models for the hivwholeweb site.
             This makes our 'models' a bit odd.
 '''
 import os
+import numpy as np
 from . import hiv
+from scipy.stats import iqr
 data_folder_full = hiv.static_folder+'/'+hiv.config['DATA_SUBFOLDER']+'/'
 data_folder_short = '/'+os.path.basename(hiv.static_folder)+'/'+hiv.config['DATA_SUBFOLDER']+'/'
 data_folder = [data_folder_short, data_folder_full]
@@ -929,14 +931,24 @@ class DNASampleTableModel(object):
                 table.append(tline)
 
         return table
-
-
-
 class ETIModel(object):
     def __init__(self, diversity, xc, roi):
-        self.diversity = diversity
+        self.diversity = np.array([diversity])
         self.xc = xc
         self.roi = roi
 
     def print_input(self):
         print(self.diversity, self.roi, self.xc)
+
+    def estimate(self):
+        from HIV_time_of_infection.TI_predictor import TI_from_diversity
+
+        ETI, (slope, intercept), xxk, ttk, residuals = TI_from_diversity(self.diversity, self.roi, self.xc)
+
+        y, x = np.histogram(residuals+ETI)
+        stats = {'IQR':iqr(residuals).round(2), 'MAE':np.mean(np.abs(residuals)).round(2),
+                 'residuals':list(residuals), 'hist':{'x':list(x), 'y':list(y)}}
+        return {"ETI": ETI.round(2), "stats":stats, "training_data":zip(xxk, ttk)}
+
+
+

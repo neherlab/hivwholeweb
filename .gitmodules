@@ -1,4 +1,4 @@
 
 [submodule "app/HIV_time_of_infection"]
-	path = app/HIV_time_of_infection
+	path = app/hiv/HIV_time_of_infection
 	url = ssh://git@git.scicore.unibas.ch:2222/neherlab/HIV_time_of_infection.git

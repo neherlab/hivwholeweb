@@ -34,11 +34,7 @@
       Enter HXB2 coordinates and diversity
     </div>
     <div class="panel-body">
-      <div class="col-md-5">
-        <div class="thumbnail">
-        </div>
-      </div>
-      <div class="col-md-7">
+      <div class="col-md-12">
         <div class="thumbnail">
           <form role="form" action="" method="post" name="ETIFrom" style="padding:10px">
             {{form.hidden_tag()}}
@@ -61,65 +57,8 @@
           </form>
         </div>
       </div>
-      <!-- put continuous text here if you need full width of haplo div -->
-      <!-- DIVERGENCE -->
-      <div class="panel tab-panel">
-        <div class="panel-heading tab">
-          <span class="glyphicon glyphicon-minus"></span>
-          <a data-toggle="collapse" data-parent="#expand" href="#divergence">Divergence</a>
-        </div>
-        <div id="divergence" class="panel-collapse collapse in" align="center">
-          <div class="panel-body">
-            <svg class="d3-plot" id="divergenceSvg"></svg>
-          </div>
-        </div>
-        <div class="text-explanation">{% include "snippets/divergenceRegion.html" ignore missing %}</div>
-      </div>
-      <!-- DIVERGENCE -->
-      <!-- DIVERSITY -->
-      <div class="panel tab-panel">
-        <div class="panel-heading tab">
-          <span class="glyphicon glyphicon-minus"></span>
-          <a data-toggle="collapse" data-parent="#expand" href="#diversity">Diversity</a>
-        </div>
-        <div id="diversity" class="panel-collapse collapse in" align="center">
-          <div class="panel-body">
-            <svg class="d3-plot" id="diversitySvg"></svg>
-          </div>
-        </div>
-        <div class="text-explanation">{% include "snippets/diversityRegion.html" ignore missing %}</div>
-      </div>
-      <!-- DIVERSITY -->
     </div>
   </div>
 </div>
-
-<!-- JavaScript loading at the end to not slow down page load -->
-<!-- <script type="text/javascript" src="/static/js/haplo.js"></script> -->
-<script type="text/javascript" src="/static/js/divdivAll.js"></script>
-<script type="text/javascript">
-function loadDivsETI(id, pnames, region, dtype, data) {
-  console.log(pnames, region);
-  data = data || [];
-  var pname = pnames[0];
-  d3.json("/api/data/divdiv/"+pname+"/"+region, function(error, divdiv) {
-    divdiv.patient = pname;
-    data.push(divdiv);
-    pnames.shift();
-    // recursive JS call
-    if (pnames.length > 0)
-      loadDivsETI(id, pnames, region, dtype, data);
-    else
-      console.log(data);
-      updateDivs(id, data, dtype);
-  });
-}
-</script>
-
-<!-- load at page opening -->
-<script>
-loadDivsETI("divergenceSvg", {{config['PATIENTS'] | tojson}}, "{{region}}", "dg");
-loadDivsETI("diversitySvg", {{config['PATIENTS'] | tojson}}, "{{region}}", "ds");
-</script>
 
 {% endblock %}

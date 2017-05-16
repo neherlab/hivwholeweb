@@ -25,7 +25,7 @@ def index():
     from ..method.forms import ETIForm, ETIFileForm
     from ...models import ETIModel
     form = ETIForm()
-    form_file = ETIFileForm()
+    #form_file = ETIFileForm()
 
     if request.method == 'POST':
         if (not form.validate_on_submit()):
@@ -42,17 +42,22 @@ def index():
             hm = ETIModel(diversity, xc, roi)
             try:
                 hm.print_input()
+                res = hm.estimate()
                 cont = True
             except ValueError:
                 flash('Not quite there yet')
                 cont = False
+                res = None
 
             if cont:
                 return render_template('ETI_result.html',
                                form=form,
                                region='RT',
-                               result = [{'ds':[[100, 0.02], [500, .05]], 'patient':'p1'},
-                                        {'ds':[[200, 0.01], [900, 0.07]], 'patient':'p2'}],
+                               params = {'xc':xc, 'start':start+1, 'end':end, 'diversity':diversity},
+                               ETI=res["ETI"][0],
+                               result = [{'data':res['training_data'], 'label':'training'},
+                                         {'data':[[res['ETI'][0], diversity]], 'label':"estimate"}],
+                               stats = res['stats'],
                                title='Time since Infection result',
                               )
 
@@ -103,7 +108,7 @@ def index():
                 return render_template('ETI_result.html',
                                form=form,
                                region='RT',
-                               result = [{'ds':[[100, 0.04], [500, .05]], 'patient':'p1'},
+                               result = [{'data':[[100, 0.04], [500, .05]], 'patient':'p1'},
                                         {'ds':[[200, 0.01], [900, 0.07]], 'patient':'p2'}],
                                title='Time since Infection result',
                               )
