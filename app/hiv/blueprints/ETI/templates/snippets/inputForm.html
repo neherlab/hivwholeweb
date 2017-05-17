@@ -1,0 +1,42 @@
+<div class="panel tab-panel">
+  <div class="panel-heading tab bottom-border">
+    Enter HXB2 coordinates and diversity
+  </div>
+  <div class="panel-body">
+    <div class="col-md-12">
+      <div class="col-md-6">
+        <div class="thumbnail">
+          <form role="form" action="" method="post" name="ETIFrom" style="padding:10px">
+            {{form.hidden_tag()}}
+            <p>Enter diversity (average hamming distance), the cutoff used to to call minor variants, and the start and end of the region across which diversity is calculated.</p><br>
+            <div class="form-group">
+              <table>
+                <tr><td>{{form.diversity.label}}:&nbsp</td> <td>{{form.diversity}}</td></tr>
+                <tr><td>{{form.xc.label}}: &nbsp</td>       <td>{{form.xc}}</td></tr>
+                <tr><td>{{form.start.label}}: &nbsp</td>    <td>{{form.start}}</td></tr>
+                <tr><td>{{form.end.label}}: &nbsp</td>      <td>{{form.end}}</td></tr>
+              </table>
+              <br>
+              <button type="submit" class="btn btn-default">Estimate time since infection</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="thumbnail">
+        <p><b>HXB2 coordinates of major landmarks</b></p>
+        <table class="table">
+          <tr><th>gene</th><th>start</th><th>end</th></tr><hr>
+          <tr><td>gag</td><td>790</td><td>2292</td></tr>
+          <tr><td>p17</td><td>790</td><td>1185</td></tr>
+          <tr><td>p24</td><td>1186</td><td>1878</td></tr>
+          <tr><td>pol</td><td>2085</td><td>5096</td></tr>
+          <tr><td>PR</td><td>2252</td><td>2549</td></tr>
+          <tr><td>RT</td><td>2550</td><td>3869</td></tr>
+          <tr><td>env</td><td>6225</td><td>8795</td></tr>
+          <tr><td>nef</td><td>8797</td><td>9417</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

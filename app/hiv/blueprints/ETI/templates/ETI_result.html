@@ -77,36 +77,8 @@
       <!-- DIVERSITY -->
     </div>
   </div>
-  <div class="panel tab-panel">
-    <div class="panel-heading tab bottom-border">
-      Enter HXB2 coordinates and diversity
-    </div>
-    <div class="panel-body">
-      <div class="col-md-12">
-        <div class="thumbnail">
-          <form role="form" action="" method="post" name="ETIFrom" style="padding:10px">
-            {{form.hidden_tag()}}
-            <p>Average Hamming distance (all sites) with minor variant cutoff </p>
-            <div class="form-group">
-              {{form.diversity.label}}
-              {{form.diversity}}
-              {{form.xc.label}}
-              {{form.xc}}
-            </div><br>
-            <p>across HXB2 region:</p>
-            <br>
-            <div class="form-group">
-              {{form.start.label}}
-              {{form.start(size="5")}}
-              {{form.end.label}}
-              {{form.end(size="5")}}
-            </div>
-            <button type="submit" class="btn btn-default">REDO Estimate</button>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
+  <h3>Make a new estimate:</h3>
+  {% include "snippets/inputForm.html" %}
 </div>
 
 <!-- call this script when python is ready with the results of the calculation as result variable
