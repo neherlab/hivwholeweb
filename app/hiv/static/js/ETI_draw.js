@@ -242,6 +242,7 @@ function drawETI_distribution(id, data) {
 
     var xAxis = d3.svg.axis()
         .scale(x)
+        .ticks(5)
         .orient("bottom");
 
     var xAxisTop = d3.svg.axis()

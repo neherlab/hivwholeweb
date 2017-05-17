@@ -97,11 +97,10 @@ class RegionFragForm(Form):
 
 class ETIForm(Form):
     diversity = FloatField('Diversity')
-    xc = FloatField('Cutoff')
+    xc = FloatField('Minor variant cutoff')
 
-    start = IntegerField('From')
-
-    end = IntegerField('To')
+    start = IntegerField('Region start (HXB2)')
+    end = IntegerField('Region end (HXB2)')
 
     def validate(self):
         start = self.start.data
