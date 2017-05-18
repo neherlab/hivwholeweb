@@ -36,12 +36,16 @@
       <h4>Input diversity {{params.diversity}}</h4>
       <h4>HXB2 coordinates: {{params.start}} to {{params.end}}</h4>
       <h4>Minor variant cutoff: {{params.xc}}</h4>
+      <br>
       <h3>Results</h3>
       <h4><b>Point estimate of duration of infection:</b> {{ETI}} years</h4>
       <h4><b>Interquartile range of duration of infection:</b> {{stats.IQR}} years</h4>
       <h4><b>Mean absolute error:</b> {{stats.MAE}} years</h4>
+      <br>
       <h3>Conversion formula</h3>
-      estimated time since infection =  {{stats.intercept}} + {{stats.slope}} x diversity
+      <p> For batch analysis, please use the formula below to convert diversity measurements in the specified region into estimates of the time since infection:</p><br>
+
+        <p><b>ETI =  {{stats.intercept}} + {{stats.slope}} x diversity</b></p>
       </div>
     </div>
     <div class="panel-body">
