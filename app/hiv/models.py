@@ -945,9 +945,10 @@ class ETIModel(object):
 
         ETI, (slope, intercept), xxk, ttk, residuals = TI_from_diversity(self.diversity, self.roi, self.xc)
 
-        y, x = np.histogram(residuals+ETI)
+        y, x = np.histogram(filter(lambda x:x>=0, residuals+ETI))
         stats = {'IQR':iqr(residuals).round(2), 'MAE':np.mean(np.abs(residuals)).round(2),
-                 'residuals':list(residuals), 'hist':{'x':list(x), 'y':list(y)}}
+                 'residuals':list(residuals), 'hist':{'x':list(x), 'y':list(y)},
+                 'slope':np.round(slope), 'intercept':np.round(intercept,2)}
         return {"ETI": ETI.round(2), "stats":stats, "training_data":zip(xxk, ttk)}
 
 
