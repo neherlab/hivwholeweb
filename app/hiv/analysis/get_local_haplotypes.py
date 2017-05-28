@@ -162,7 +162,7 @@ def format_haplotypes(haploc, VERBOSE=0, label_id='', label_description='', freq
 
     seqs = []
     if not haploc:
-        return secs
+        return seqs
 
     count_tot = sum(haploc.itervalues())
     for (seq, count) in haploc.most_common():
