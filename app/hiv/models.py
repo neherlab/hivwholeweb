@@ -149,6 +149,9 @@ class GenomeModel(object):
         fn = 'consensus_'+self.psname+'_'+self.region+'.'+format
         return data_folder[full]+'sequences/'+fn
 
+    def get_consensi_alignment_filename(self, full=True, format='fasta'):
+        fn = 'consensi_alignment_'+self.psname+'_'+self.region+'.'+format
+        return data_folder[full]+'alignments/'+fn
 
     def get_genome_filename(self, *args, **kwargs):
         if self.type in ['patient reference', 'external reference']:

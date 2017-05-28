@@ -57,7 +57,7 @@ def data_proxy(path):
     else:
         fmt = None
 
-    print(fields)
+    print(dtype, fields, path)
     # Switch by data type
     # TREES
     if dtype == 'tree':
@@ -88,7 +88,7 @@ def data_proxy(path):
 
 
     # GENOMES
-    elif dtype in ['genome', 'consensus', 'reference']:
+    elif dtype in ['genome', 'consensus','reference']:
         psname = fields[0]
         if len(fields) < 2:
             region = 'genomewide'
@@ -102,8 +102,26 @@ def data_proxy(path):
         fn = (GenomeModel(psname, region=region)
               .get_genome_filename(full=False, **kwargs))
 
+        print(fn)
         return send_static_file(fn)
 
+    # CONSENSUS alignment
+    elif dtype == "consensi":
+        psname = fields[0]
+        if len(fields) < 2:
+            region = 'genomewide'
+        else:
+            region = fields[1]
+
+        from ...models import GenomeModel
+        kwargs = {}
+        if fmt is not None:
+            kwargs['format'] = fmt
+        fn = (GenomeModel(psname, region=region)
+              .get_consensi_alignment_filename(full=False, **kwargs))
+
+        print(fn)
+        return send_static_file(fn)
 
     # ALLELE COUNT TRAJECTORIES
     elif dtype == 'act':
