@@ -14,11 +14,11 @@ content:    Hivwholeweb: a web application for longitudinal NGS data of HIV-1.
 #    start_response(status, response_headers)
 #
 #    return [output]
-from flask import Flask
+from flask import Flask, request, send_from_directory
 
 
 # TODO: fix static folder, this requires adapting HTML templates
-hiv = Flask(__name__)
+hiv = Flask(__name__, static_folder='static')
 hiv.config.from_object('config')
 
 # welcome page is the index
@@ -52,6 +52,10 @@ hiv.register_blueprint(ETI)
 from .blueprints.ETI import ETI_result
 hiv.register_blueprint(ETI_result)
 
+
+@hiv.route('/robots.txt')
+def static_from_root():
+    return send_from_directory(hiv.static_folder, request.path[1:])
 
 # RESTful API
 from .blueprints.api import api_bp
