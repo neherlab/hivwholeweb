@@ -92,7 +92,7 @@ function drawETI_diversity(id, data) {
           .attr("x", width / 2)
           .attr("y", 40)
           .style("text-anchor", "middle")
-          .text("Time from infection [days]");
+          .text("Time from infection [years]");
 
     vis.append("g")
          .attr("class", "d3-axis")
@@ -293,7 +293,7 @@ function drawETI_distribution(id, data) {
           .attr("x", width / 2)
           .attr("y", 40)
           .style("text-anchor", "middle")
-          .text("Time from infection [days]");
+          .text("Time from infection [years]");
 
     vis.append("g")
          .attr("class", "d3-axis")
