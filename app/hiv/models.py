@@ -934,11 +934,14 @@ class DNASampleTableModel(object):
                 table.append(tline)
 
         return table
+
+
 class ETIModel(object):
-    def __init__(self, diversity, xc, roi):
+    def __init__(self, diversity, xc, roi, codon_pos='all'):
         self.diversity = np.array([diversity])
         self.xc = xc
         self.roi = roi
+        self.codon_pos = codon_pos
 
     def print_input(self):
         print(self.diversity, self.roi, self.xc)
@@ -946,7 +949,8 @@ class ETIModel(object):
     def estimate(self):
         from HIV_time_of_infection.TI_predictor import TI_from_diversity
 
-        ETI, (slope, intercept), xxk, ttk, residuals = TI_from_diversity(self.diversity, self.roi, self.xc)
+        ETI, (slope, intercept), xxk, ttk, residuals = TI_from_diversity(self.diversity, self.roi,
+                                                                         self.xc, self.codon_pos)
 
         y, x = np.histogram(filter(lambda x:x>=0, residuals+ETI))
         stats = {'IQR':iqr(residuals).round(2), 'MAE':np.mean(np.abs(residuals)).round(2),

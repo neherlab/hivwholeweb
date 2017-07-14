@@ -38,8 +38,9 @@ def index():
             start = form.start.data - 1 #Inclusive coordinates
             end = form.end.data
             roi = (start, end)
+            codon_pos = form.codon_pos.data
 
-            hm = ETIModel(diversity, xc, roi)
+            hm = ETIModel(diversity, xc, roi, codon_pos=codon_pos)
             try:
                 res = hm.estimate()
                 cont = True

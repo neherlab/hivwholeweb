@@ -101,6 +101,7 @@ class ETIForm(Form):
 
     start = IntegerField('Region start (HXB2)')
     end = IntegerField('Region end (HXB2)')
+    codon_pos = SelectField('Codon position', choices=[['all', 'all'], ['1', '1'], ['2', '2'], ['3','3']])
 
     def validate(self):
         start = self.start.data
@@ -116,6 +117,11 @@ class ETIForm(Form):
         if diversity<0 or diversity>0.3:
           return False
 
+        if self.codon_pos.data!='all': #validate codon pos
+          from hiv.HIV_time_of_infection.TI_predictor import get_reading_frame
+          if get_reading_frame((start, end)) is None:
+            return False
+
         return True
 
 
@@ -126,6 +132,8 @@ class ETIFileForm(Form):
     start = IntegerField('From')
 
     end = IntegerField('To')
+
+    codon_pos = SelectField('Codon position', choices=['all', 1, 2, 3])
 
     def validate(self):
         start = self.start.data
