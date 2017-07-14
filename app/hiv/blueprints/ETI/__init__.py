@@ -29,7 +29,9 @@ def index():
 
     if request.method == 'POST':
         if (not form.validate_on_submit()):
-            flash('Diversity form incorrectly filled!')
+            flash("Values in form are inconsistent! Make sure start and end positions are between"
+                  " HXB2 position 500 and 9500 and diversity between 0 and 0.3. If you selected a"
+                  " specific codon position, your region has to be fully contained in a gene!")
 
         elif form.validate_on_submit():
             # NOTE: we offer only genomewide HXB2 coordinates
