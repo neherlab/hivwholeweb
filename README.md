@@ -8,12 +8,16 @@ Web application for deep sequencing on longitudinal HIV-1 samples from patients.
 
 #### Requirements:
 
- - Linux (teted on Ubuntu 20.04)
+ - Linux (tested on Ubuntu 20.04)
  - bash
  - docker
  - docker-compose
 
-A convenience script
+On Ubuntu 20.04 you can use convenience script:
+
+```
+./install_docker.sh
+```
 
 #### Data
 
