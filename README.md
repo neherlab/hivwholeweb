@@ -16,7 +16,7 @@ Web application for deep sequencing on longitudinal HIV-1 samples from patients.
 On Ubuntu 20.04 you can use convenience script:
 
 ```
-./install_docker.sh
+./scripts/install_docker.sh
 ```
 
 #### Data
@@ -58,11 +58,13 @@ Assuming the project's code is located in `hivwholeweb`, put the data into `hivw
 
 #### Running the application
 
-Run docker-compose using the convenience script:
+To launch the application using docker-compose with the script:
 
 ```
-./run.sh
+./scripts/run.sh
 ```
+
+
 
 #### Implementation details:
 
