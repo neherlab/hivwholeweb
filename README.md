@@ -56,14 +56,45 @@ Assuming the project's code is located in `hivwholeweb`, put the data into `hivw
     └── xsectional
 ```
 
-#### Running the application
+#### Recommended: running the application in background
 
-To launch the application using docker-compose with the script:
+To launch the application using docker-compose *as a detached process* type:
 
 ```
 ./scripts/run.sh
 ```
 
+It is safe to close the terminal session and then come back - the pplication will keep running.
+In case of container failure or machine restart, the affected containers will restart automatically.
+
+To browse logs:
+
+```
+./scripts/logs.sh
+```
+
+To shutdown the application:
+
+```
+./scripts/stop.sh
+```
+
+
+#### Alternative: running the application while browsing logs (attached)
+
+To launch the application using docker-compose with the script:
+
+```
+./scripts/run-attached.sh
+```
+
+The logs can be seen immediately. To shutdown the application press Ctrl+C. The application will be terminated if the terminal session is closed.
+
+One could use GNU Screen to make application in this mode persist across terminal sessions:
+
+```
+screen -qxRS app -- ./scripts/run-attached.sh
+```
 
 
 #### Implementation details:
