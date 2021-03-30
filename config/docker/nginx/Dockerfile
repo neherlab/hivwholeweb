@@ -1,4 +1,4 @@
-FROM nginx:1.19.7-alpine
+FROM nginx:1.19.7
 
 ARG UID
 ARG GID
@@ -11,8 +11,8 @@ ENV USER=${USER}
 ENV GROUP=${GROUP}
 
 RUN set -x \
-  && addgroup -g $GID -S $GROUP \
-  && adduser -S -D -H -u $UID -h /home/$USER -s /sbin/nologin -G nginx -g $GROUP $USER
+  && if ! grep -q -E "^${GROUP}" /etc/group; then addgroup --gid "${GID}" "${GROUP}"; fi \
+  && if ! grep -q -E "^${USER}:" /etc/passwd && [ "$(getent passwd 33)" == "" ]; then adduser --system --uid "${UID}" --ingroup "${GROUP}" --home "/home" --shell /bin/bash "${USER}"; fi
 
 RUN set -x \
   && mkdir -p /home/$USER \

@@ -1,0 +1,16 @@
+[Unit]
+Description=Hivwholeweb service
+Requires=docker.service
+After=docker.service
+
+[Service]
+User=www-data
+Group=www-data
+Type=oneshot
+RemainAfterExit=true
+WorkingDirectory=/www/hivwholeweb
+ExecStart=/usr/bin/bash /www/hivwholeweb/scripts/run.sh
+ExecStop=/usr/bin/bash /www/hivwholeweb/scripts/stop.sh
+
+[Install]
+WantedBy=multi-user.target
