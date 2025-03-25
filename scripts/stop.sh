@@ -34,4 +34,4 @@ echo "UID=${UID}"
 echo "GROUP=${GROUP}"
 echo "GID=${GID}"
 
-docker-compose -f config/docker/docker-compose.yml down
+docker compose -f config/docker/docker-compose.yml down
