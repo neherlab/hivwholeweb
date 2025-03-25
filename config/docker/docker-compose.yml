@@ -45,8 +45,8 @@ services:
       - ../../.volumes/nginx/cache:/var/cache/nginx
       - ../../.volumes/nginx/logs:/var/lib/nginx/logs
       - ../../.volumes/nginx/tmp:/tmp
-      - /etc/ssl/bc2-resit-hiv02.bc2.unibas.ch.fullchain.pem:/etc/ssl/bc2-resit-hiv02.bc2.unibas.ch.fullchain.pem:ro
-      - /etc/ssl/bc2-resit-hiv02.bc2.unibas.ch.privkey.pem:/etc/ssl/bc2-resit-hiv02.bc2.unibas.ch.privkey.pem:ro
+      - /etc/ssl/bz-rgrn01-vsl01.bioz.unibas.ch.fullchain.pem:/etc/ssl/fullchain.pem:ro
+      - /etc/ssl/bz-rgrn01-vsl01.bioz.unibas.ch.privkey.pem:/etc/ssl/privkey.pem:ro
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     ports:
