@@ -37,5 +37,5 @@ echo "GID=${GID}"
 mkdir -p .volumes/nginx/{cache,logs,tmp}
 mkdir -p .volumes/flask/tmp
 
-docker compose -f config/docker/docker-compose.yml build
+docker compose -f config/docker/docker-compose.yml build --progress=plain
 docker compose -f config/docker/docker-compose.yml up --detach
