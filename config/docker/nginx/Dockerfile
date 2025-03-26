@@ -12,7 +12,11 @@ ENV GROUP=${GROUP}
 
 RUN set -x \
   && if ! grep -q -E "^${GROUP}" /etc/group; then addgroup --gid "${GID}" "${GROUP}"; fi \
-  && if ! grep -q -E "^${USER}:" /etc/passwd && [ "$(getent passwd 33)" == "" ]; then adduser --system --uid "${UID}" --ingroup "${GROUP}" --home "/home" --shell /bin/bash "${USER}"; fi
+  && if ! grep -q -E "^${USER}:" /etc/passwd && [ "$(getent passwd ${USER})" == "" ]; then adduser --system --uid "${UID}" --ingroup "${GROUP}" --home "/home" --shell /bin/bash "${USER}"; fi
+
+RUN set -x \
+  && getent group "www-data" || groupadd "www-data" \
+  && usermod -a -G "www-data" "${USER}"
 
 RUN set -x \
   && mkdir -p /home/$USER \
