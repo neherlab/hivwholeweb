@@ -17,7 +17,8 @@ RUN set -x \
     fi \
 &&  if ! getent passwd "${USER}"; \
     then \
-      adduser --system --uid "${UID}" --ingroup "${GROUP}" --groups "www-data" --home "/home/${USER}" --shell /bin/bash "${USER}"; \
+      adduser --system --uid "${UID}" --ingroup "${GROUP}" --home "/home/${USER}" --shell /bin/bash "${USER}" \
+      && usermod -a -G "www-data" "${USER}"; \
     else \
       adduser "${USER}" "www-data" || true; \
     fi
