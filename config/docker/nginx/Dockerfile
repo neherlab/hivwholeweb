@@ -25,6 +25,7 @@ RUN set -x \
 
 RUN set -x \
   && mkdir -p /home/$USER \
+  && mkdir -p /html \
   && mkdir -p /web \
   && mkdir -p /sourcemaps \
   && mkdir -p /var/lib/nginx/logs \
@@ -36,6 +37,7 @@ RUN set -x \
   && chown $UID:$GID -R /home/$USER \
   && chown $UID:$GID -R /var/lib/nginx \
   && chown $UID:$GID -R /var/cache/nginx \
+  && chown $UID:$GID -R /html \
   && chown $UID:$GID -R /web \
   && chown $UID:$GID -R /sourcemaps
 

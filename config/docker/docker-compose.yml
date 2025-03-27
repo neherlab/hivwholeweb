@@ -45,6 +45,7 @@ services:
       - ../../.volumes/nginx/cache:/var/cache/nginx
       - ../../.volumes/nginx/logs:/var/lib/nginx/logs
       - ../../.volumes/nginx/tmp:/tmp
+      - ../../html:/html
       - /etc/ssl/bz-rgrn01-vsl01.bioz.unibas.ch.fullchain.pem:/etc/ssl/fullchain.pem:ro
       - /etc/ssl/bz-rgrn01-vsl01.bioz.unibas.ch.privkey.pem:/etc/ssl/privkey.pem:ro
       - /etc/timezone:/etc/timezone:ro
