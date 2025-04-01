@@ -44,7 +44,7 @@ hiv.biozentrum.unibas.ch
  - The 2 containers are orchestrated using docker-compose (`config/docker/docker-compose.yml`).
  - The helper scripts in the `scripts/` directory allow to start and stop the app.
  - The systemd `hivwholeweb.service` in the `infra/` directory allows to (re)start and stop the app system-wide.
- - The VMs are assumed to have TSL certs installed (typically in `/etc/ssl/`) and updated periodically
+ - The VMs are assumed to have TLS (SSL) certs installed (typically in `/etc/ssl/`) and updated periodically
  - On cert update, the external updater restarts the `hivwholeweb` systemd service
 
 ### Deployment
