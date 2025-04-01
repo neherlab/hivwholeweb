@@ -45,15 +45,15 @@ hiv.biozentrum.unibas.ch
  - The helper scripts in the `scripts/` directory allow to start and stop the app.
  - The systemd `hivwholeweb.service` in the `infra/` directory allows to (re)start and stop the app system-wide.
  - The VMs are assumed to have TSL certs installed (typically in `/etc/ssl/`) and updated periodically
- - On cert update, the external updated restarts the `hivwholeweb` systemd service
+ - On cert update, the external updater restarts the `hivwholeweb` systemd service
 
 ### Deployment
 
 1. Request a virtual machine (VM) from unibas IT folks and give them **public** key(s) to add so that you can SSH to the machine.
 
-2. SSH to the VM. Currently, you need to ssh as a `neherlab` user to the `bz-rgrn01-vsl01.bioz.unibas.ch`:
+2. SSH to the VM. Currently, you need to ssh as `neherlab` user to the `bz-rgrn01-vsl01.bioz.unibas.ch`:
 
-    For the current deployment, get the **private** SSH key `neherlab-dev-unibas-vms-2025-02-20_12-54-56_229Z` from 1Password and follow instructions in the note attached to the 1Password entry, but basically download the kay and do this:
+    For the current deployment, get the **private** SSH key `neherlab-dev-unibas-vms-2025-02-20_12-54-56_229Z` from 1Password and follow instructions in the note attached to the 1Password entry, but basically download the key and do this:
     ```bash
     ssh -i ~/.ssh/neherlab-dev-unibas-vms-2025-02-20_12-54-56_229Z neherlab@bz-rgrn01-vsl01.bioz.unibas.ch
     ```
@@ -127,7 +127,7 @@ hiv.biozentrum.unibas.ch
    dig +short hiv.biozentrum.unibas.ch
    ```
 
-   The run the verification above again, but now with this domain name. Make sure that you see access log entries when you are hitting the app with requests from outside (so that we know that we are talking to the new machine, and not the old one).
+   Then run the verification above again, but now with this domain name. Make sure that you see access log entries when you are hitting the app with requests from outside (so that we know that we are talking to the new machine, and not the old one).
 
 
 
