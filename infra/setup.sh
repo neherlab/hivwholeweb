@@ -1,15 +1,16 @@
-# Create group `www-data` and user `www-data`
-sudo addgroup www-data
-sudo adduser --system --ingroup www-data --home /www --shell /bin/bash www
+# Add user `neherlab` to groups `www-data`, `docker`
+sudo usermod -aG www-data neherlab
+sudo usermod -aG docker neherlab
 
-# Add user `www-data` to group `docker`
-sudo usermod -aG docker www-data
+# Restart cron service
+sudo systemctl restart cron.service
 
-# Copy systemd service file
-sudo cp hivwholeweb.service /etc/systemd/system/
+# Copy systemd service and timer files
+sudo cp hivwholeweb.{service,timer} /etc/systemd/system/
 
 # Reload service files
 sudo systemctl daemon-reload
 
-# Start service
+# Enable and start service
+sudo systemctl enable hivwholeweb.service
 sudo systemctl start hivwholeweb.service
