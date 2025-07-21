@@ -14,6 +14,9 @@ ENV GROUP=${GROUP}
 
 RUN set -x \
   && export DEBIAN_FRONTEND=noninteractive \
+  && sed -i 's|http://deb.debian.org|http://archive.debian.org|g' /etc/apt/sources.list \
+  && sed -i 's|security.debian.org|archive.debian.org|g' /etc/apt/sources.list \
+  && echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid-until \
   && apt-get update -qq --yes \
   && apt-get install -qq --no-install-recommends --yes \
   uwsgi \
