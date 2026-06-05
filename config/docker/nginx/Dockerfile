@@ -13,14 +13,14 @@ ENV GROUP=${GROUP}
 RUN set -x \
 &&  if ! getent group "${GROUP}"; \
     then \
-      addgroup --gid "${GID}" "${GROUP}"; \
+      groupadd --gid "${GID}" "${GROUP}"; \
     fi \
 &&  if ! getent passwd "${USER}"; \
     then \
-      adduser --system --uid "${UID}" --ingroup "${GROUP}" --home "/home/${USER}" --shell /bin/bash "${USER}" \
+      useradd --system --uid "${UID}" --gid "${GROUP}" --home-dir "/home/${USER}" --shell /bin/bash "${USER}" \
       && usermod -a -G "www-data" "${USER}"; \
     else \
-      adduser "${USER}" "www-data" || true; \
+      usermod -a -G "www-data" "${USER}" || true; \
     fi
 
 RUN set -x \
