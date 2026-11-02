@@ -22,7 +22,7 @@ The website is a static site: pages, scripts, and data files, with no server cod
 
 ## Commands
 
-`mise.toml` pins the tools for the host and for the project container (`dev/dev`). The `justfile` recipes marked "container" run in the project container; the upload recipes read their settings from `.env` (`.env.example`). The recipes that run scripts with package imports first run `just deps`, which installs the versions of `bun.lock` into `node_modules/` and fails when `package.json` and `bun.lock` disagree.
+`mise.toml` pins the tools for the host and for the project container (`dev/dev`). The `justfile` recipes marked "container" run in the project container; the upload recipes read their settings from `.env` (`.env.example`) and their AWS credentials from the standard AWS variables ([Uploads](hosting.md#uploads)). The recipes that run scripts with package imports first run `just deps`, which installs the versions of `bun.lock` into `node_modules/` and fails when `package.json` and `bun.lock` disagree.
 
 - `just serve`: build `dist/` and serve it at http://127.0.0.1:8080/ (`PORT` changes the port); it builds again when a file under `src/` changes
 - `just serve-data`: serve `web-data/` and the pulled download files as the data host at http://127.0.0.1:8081/ (`DATA_PORT` changes the port)

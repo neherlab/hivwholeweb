@@ -20,6 +20,10 @@ flowchart LR
 
 The lab's infrastructure project creates and configures the buckets, the distributions, the certificates, the DNS records, the CI role, and the redirect of the old host name, and it defines the CloudFront Functions and the response headers. This repository holds no infrastructure code: it uploads to S3, fills the key stores, and clears the CloudFront caches.
 
+## Uploads
+
+The upload scripts (`just publish-site`, `just publish-preview`, `just data-deploy`, `just data-verify`) call S3, CloudFront, and the key store API through the AWS SDK for JavaScript, inside the Bun process (`scripts/aws.ts`). Each script sends up to 64 S3 requests at once over reused HTTPS connections, so checking the 2490 objects of the data host takes about 2 seconds. The clients take the region from `AWS_DEFAULT_REGION` and the credentials from the standard AWS variables, which `aws-actions/configure-aws-credentials` sets in CI and `aws-vault exec <profile> --` sets locally; `dev/dev` forwards them into the container.
+
 ## Caching
 
 - Files under `static-<hash>/` carry `Cache-Control: public, max-age=31536000, immutable`: browsers keep them forever, and a change of a static file gives a new folder name. Old folders stay in the bucket, so a page that a browser or CloudFront still holds keeps working.
@@ -30,9 +34,9 @@ So S3 serves few reads: one per CloudFront region after a deploy, plus a read wh
 
 ## Key stores
 
-Each host has a CloudFront key store with the URL path of every object that it serves. A CloudFront Function of the host passes a request whose path is a key and answers every other path with 404 at the edge, so a flood of random paths never reaches S3. Each deploy uploads its objects, adds the new paths to the store, clears the cache, deletes the paths that it no longer serves, and checks the store against the expected paths. The page store keeps the paths of earlier `static-<hash>/` folders. A store holds at most 5 MB, and one update changes at most 50 keys, so the deploy writes in batches.
+Each host has a CloudFront key store with the URL path of every object that it serves. A CloudFront Function of the host passes a request whose path is a key and answers every other path with 404 at the edge, so a flood of random paths never reaches S3. Each deploy uploads its objects, adds the new paths to the store, clears the cache, deletes the paths that it no longer serves, and checks the store against the expected paths. The page store keeps the paths of earlier `static-<hash>/` folders. A store holds at most 5 MB, and one update changes at most 50 keys, so the deploy writes in batches, one after another, each with the ETag of the previous one. A read of the store returns at most 50 keys per request, one page after another, at about 0.4 seconds per page, so reading the data store takes about 20 seconds.
 
-The key store API signs with SigV4A, which accepts only version 2 session tokens, which regional STS endpoints issue. `aws-vault` and `aws-actions/configure-aws-credentials` use the regional endpoint of their region by default; do not set `sts_regional_endpoints = legacy` for the deploy profile.
+The key store API signs with SigV4A (the JavaScript signer of `@aws-sdk/signature-v4a`), which accepts only version 2 session tokens, which regional STS endpoints issue. `aws-vault` and `aws-actions/configure-aws-credentials` use the regional endpoint of their region by default; do not set `sts_regional_endpoints = legacy` for the deploy profile.
 
 ## Page host
 
@@ -48,7 +52,7 @@ The key store API signs with SigV4A, which accepts only version 2 session tokens
 
 `.github/workflows/web.yml` builds and uploads the site on every push; it runs no tests and downloads no data, because the tests run locally ([Commands](development.md#commands)). On pushes to `master`, the production job builds with `HIVWHOLEWEB_PLAUSIBLE_DOMAIN`, assumes the AWS role of the repository variable `HIVWHOLEWEB_SITE_AWS_ROLE_ARN` through GitHub OIDC, and runs `just publish-site`. It fails before the build when `HIVWHOLEWEB_DATA_URL`, `HIVWHOLEWEB_PLAUSIBLE_DOMAIN`, or a `HIVWHOLEWEB_SITE_AWS_*` variable is empty. CI deploys every push to `master` at once, so when a change links new data, run the data deploy before the change reaches `master`.
 
-Every other ref gets preview sites (`.github/scripts/publish-previews`): `neherlab--hivwholeweb--commit-<sha>`, `--branch-<branch>`, and `--pr-<number>` with a pull request comment, each at `https://<site>.previews.neherlab.click`. Preview builds disallow all crawling and have no analytics. The shared preview distribution belongs to another AWS account and sends its own Content Security Policy, `img-src 'self' blob: data: *.githubusercontent.com`, which blocks the example tree images from the data host on previews; production is not affected.
+Every other ref gets preview sites (`.github/scripts/publish-previews`): `neherlab--hivwholeweb--commit-<sha>`, `--branch-<branch>`, and `--pr-<number>` with a pull request comment, each at `https://<site>.previews.neherlab.click`. `just publish-preview` uploads the build once, to the first site, and copies its objects inside the bucket to the other sites, static files before pages, then clears the cache of the preview distribution. Preview builds disallow all crawling and have no analytics. The shared preview distribution belongs to another AWS account and sends its own Content Security Policy, `img-src 'self' blob: data: *.githubusercontent.com`, which blocks the example tree images from the data host on previews; production is not affected.
 
 ## Data host
 
