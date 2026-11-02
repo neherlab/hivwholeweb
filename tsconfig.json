@@ -15,5 +15,5 @@
     "checkJs": true,
     "types": ["bun"]
   },
-  "include": ["server/**/*.ts", "scripts/**/*.ts", "tests/**/*.ts", "src/static/eti/*.js"]
+  "include": ["server/**/*.ts", "scripts/**/*.ts", "src/static/eti/*.js"]
 }

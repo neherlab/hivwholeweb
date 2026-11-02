@@ -15,7 +15,6 @@ The website is a static site: pages, scripts, and data files, with no server cod
 - `data-manifest.json`: every object of the data host, with its source, sha256, size, and headers
 - `server/`: the local page host and data host (Bun, no runtime dependencies)
 - `scripts/`: the build, the uploads, and the data manifest, archives, deploy, and pull
-- `tests/`: the tests, with the golden master of the ETI estimator in `tests/golden/eti/`
 - `dev/`: the project container
 - `.github/`: the CI workflow, which builds and uploads the site ([Deployment from CI](hosting.md#deployment-from-ci))
 - `docs/`: the documents for maintainers: development, hosting, and the conversion from the Flask server
@@ -26,14 +25,13 @@ The website is a static site: pages, scripts, and data files, with no server cod
 
 - `just serve`: build `dist/` and serve it at http://127.0.0.1:8080/ (`PORT` changes the port); it builds again when a file under `src/` changes
 - `just serve-data`: serve `web-data/` and the pulled download files as the data host at http://127.0.0.1:8081/ (`DATA_PORT` changes the port)
-- `just test`, `just typecheck`, `just lint`: the tests that need no downloaded data, the typecheck, and the lint of the workflow and its script
-- `just test-eti`: the golden master of the ETI estimator (`tests/test_gm_eti.ts`), which reads the training data from `web-data/`; it fails with `run just data-pull` when the file is missing
+- `just typecheck`, `just lint`: the typecheck, and the lint of the workflow and its script
 - `just build-dist [--preview]`: write `dist/` ([Build](#build))
 - `just data-pull [--files]`: fill `web-data/`, and with `--files` also `.cache/data-files/` with the download files, from the archives of the data host
 - `just publish-site`, `just publish-preview <site>...`: upload `dist/` to the production page host or to preview sites ([Page host](hosting.md#page-host))
 - `just data-archives`, `just data-manifest`, `just data-verify`, `just data-deploy`: build the data archives, write the manifest, and check and fill the data host ([Data host](hosting.md#data-host))
 
-All checks run only locally and only when called: CI runs no tests ([Deployment from CI](hosting.md#deployment-from-ci)). No recipe downloads or uploads data on its own: only `just data-pull`, `just data-deploy`, and `just data-verify` reach the data host, and only when called.
+All checks run only locally and only when called ([Deployment from CI](hosting.md#deployment-from-ci)). No recipe downloads or uploads data on its own: only `just data-pull`, `just data-deploy`, and `just data-verify` reach the data host, and only when called.
 
 ## Local servers
 

@@ -1,7 +1,7 @@
 name: "Web app"
 
-# Builds the site on every push and uploads it. CI runs no tests and downloads
-# no data: the tests run locally (docs/development.md).
+# Builds the site on every push and uploads it. CI runs no checks and downloads
+# no data: the checks run locally (docs/development.md).
 #
 # - Pushes to master build the production site (just build-dist, with the
 #   analytics domain) and upload it to https://hiv.neherlab.org with

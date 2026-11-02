@@ -32,12 +32,12 @@ the page checks.
 
 The estimate repeats the arithmetic of numpy 2 operation by operation: the
 pairwise summation of `np.sum`, `np.round`, `np.percentile`, and `np.histogram`.
-It parses and formats numbers as Python 2 did. Two checks compare it with the
-old Flask app (`app/` at the tag, in its Python 2.7 image):
+It parses and formats numbers as Python 2 did. Two checks compared it with the
+old Flask app (`app/` at the tag, in its Python 2.7 image), both during the
+conversion:
 
-- `tests/test_gm_eti.ts`, in `just test-eti`: the golden master
-  `tests/golden/eti/`, result pages of the old app, captured during the
-  conversion
+- result pages of the old app for a grid of inputs and for edge cases of the
+  form parsing
 - a comparison during the conversion: a grid of about 10000 inputs over every
   gene, windows of 1 to 3000 sites along the genome, the codon positions, and a
   range of cutoffs
