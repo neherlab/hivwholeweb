@@ -158,7 +158,11 @@ export function needsMultipart(size: number): boolean {
 
 /** Return the byte ranges of the parts of a multipart upload of `size` bytes, numbered from 1; one part for an empty object. */
 export function partRanges(size: number, partSize: number): { number: number; start: number; end: number }[] {
-  return Array.from({ length: Math.max(1, Math.ceil(size / partSize)) }, (_, index) => ({ number: index + 1, start: index * partSize, end: Math.min(size, (index + 1) * partSize) }));
+  return Array.from({ length: Math.max(1, Math.ceil(size / partSize)) }, (_, index) => ({
+    number: index + 1,
+    start: index * partSize,
+    end: Math.min(size, (index + 1) * partSize),
+  }));
 }
 
 /** Tell whether CloudFront compresses a content type. */
@@ -211,12 +215,16 @@ export function objectState(object: ManifestObject, stored: StoredObject | undef
   if (!sameBytes) {
     return "conflict";
   }
-  const sameHeaders = stored.ContentType === object.contentType && stored.CacheControl === object.cacheControl && stored.ContentDisposition === object.contentDisposition;
+  const sameHeaders =
+    stored.ContentType === object.contentType && stored.CacheControl === object.cacheControl && stored.ContentDisposition === object.contentDisposition;
   return sameHeaders ? "match" : "differs";
 }
 
 /** Size, checksums, and headers of a stored object, as HeadObject reports them with ChecksumMode ENABLED. */
-export type StoredObject = Pick<HeadObjectCommandOutput, "ContentLength" | "ChecksumSHA256" | "ChecksumCRC64NVME" | "ChecksumType" | "ContentType" | "CacheControl" | "ContentDisposition">;
+export type StoredObject = Pick<
+  HeadObjectCommandOutput,
+  "ContentLength" | "ChecksumSHA256" | "ChecksumCRC64NVME" | "ChecksumType" | "ContentType" | "CacheControl" | "ContentDisposition"
+>;
 
 /** State of a stored object against the manifest. */
 export type ObjectState = "match" | "missing" | "differs" | "conflict";

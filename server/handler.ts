@@ -55,7 +55,10 @@ function respond(request: Request, site: PageSite): Response {
   if (site.keys.has(`${path}/`)) {
     return redirect(`${path}/${url.search}`);
   }
-  return new Response(Bun.file(join(site.dist, "404.html")), { status: 404, headers: { "Content-Type": contentType("404.html"), "Cache-Control": siteCacheControl("404.html") } });
+  return new Response(Bun.file(join(site.dist, "404.html")), {
+    status: 404,
+    headers: { "Content-Type": contentType("404.html"), "Cache-Control": siteCacheControl("404.html") },
+  });
 }
 
 function redirect(location: string): Response {

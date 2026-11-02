@@ -92,9 +92,7 @@ async function scriptFiles(webData: string): Promise<string[]> {
     .map((path) => /^api\/data\/tree\/([^/]+)\/([^/]+)\.json$/u.exec(path))
     .filter((match) => match !== null)
     .map(([, patient = "", region = ""]) =>
-      region.endsWith("_minor")
-        ? `trees/haplotype_tree_${patient}_${region.slice(0, -"_minor".length)}.json`
-        : `trees/consensi_tree_${patient}_${region}.json`,
+      region.endsWith("_minor") ? `trees/haplotype_tree_${patient}_${region.slice(0, -"_minor".length)}.json` : `trees/consensi_tree_${patient}_${region}.json`,
     );
   return [
     ...PATIENTS.flatMap((p) => [`sequences/reference_${p}_genomewide.gb`, `physiological/viral_load_${p}.tsv`, `physiological/cell_count_${p}.tsv`]),

@@ -138,7 +138,9 @@ if (mode === "verify") {
 const conflicts = pending.filter(({ object, state }) => state === "conflict" && !MUTABLE_KEYS.has(object.key));
 
 if (conflicts.length > 0) {
-  console.error(`objects that hold other bytes than the manifest names; keys are immutable, so new content needs a new key:\n${conflicts.map(({ object }) => object.key).join("\n")}`);
+  console.error(
+    `objects that hold other bytes than the manifest names; keys are immutable, so new content needs a new key:\n${conflicts.map(({ object }) => object.key).join("\n")}`,
+  );
   process.exit(1);
 }
 
@@ -221,7 +223,9 @@ async function head(key: string): Promise<StoredObject | undefined> {
 
 /** Copy an object onto its key with the manifest's headers and a full-object SHA-256. */
 async function copyObject(object: ManifestObject, source: string): Promise<void> {
-  await s3.send(new CopyObjectCommand({ ...objectFields(object), CopySource: source, ChecksumAlgorithm: ChecksumAlgorithm.SHA256, MetadataDirective: "REPLACE" }));
+  await s3.send(
+    new CopyObjectCommand({ ...objectFields(object), CopySource: source, ChecksumAlgorithm: ChecksumAlgorithm.SHA256, MetadataDirective: "REPLACE" }),
+  );
 }
 
 /** Upload an object in one PUT, which S3 rejects unless its SHA-256 matches the manifest. */
@@ -232,7 +236,9 @@ async function putObject(object: ManifestObject, body: Uint8Array | Readable): P
 /** Upload a file as a multipart upload with the manifest's full-object CRC64NVME, which S3 checks before it stores the object. */
 async function uploadMultipart(object: ManifestObject, file: string): Promise<void> {
   const key = storageKey(object);
-  const created = await s3.send(new CreateMultipartUploadCommand({ ...objectFields(object), ChecksumAlgorithm: ChecksumAlgorithm.CRC64NVME, ChecksumType: "FULL_OBJECT" }));
+  const created = await s3.send(
+    new CreateMultipartUploadCommand({ ...objectFields(object), ChecksumAlgorithm: ChecksumAlgorithm.CRC64NVME, ChecksumType: "FULL_OBJECT" }),
+  );
   const uploadId = created.UploadId;
   if (uploadId === undefined) {
     throw new Error(`CreateMultipartUpload of ${key} returned no UploadId`);
@@ -241,7 +247,9 @@ async function uploadMultipart(object: ManifestObject, file: string): Promise<vo
     const parts = await mapLimited(partRanges(object.size, PART_SIZE), PART_JOBS, async ({ number, start, end }) => {
       const bytes = await Bun.file(file).slice(start, end).bytes();
       const checksum = await crc64nvmeBase64(bytes);
-      const uploaded = await s3.send(new UploadPartCommand({ Bucket: bucket, Key: key, UploadId: uploadId, PartNumber: number, Body: bytes, ChecksumCRC64NVME: checksum }));
+      const uploaded = await s3.send(
+        new UploadPartCommand({ Bucket: bucket, Key: key, UploadId: uploadId, PartNumber: number, Body: bytes, ChecksumCRC64NVME: checksum }),
+      );
       return { ETag: uploaded.ETag, PartNumber: number, ChecksumCRC64NVME: checksum };
     });
     await s3.send(
@@ -257,7 +265,9 @@ async function uploadMultipart(object: ManifestObject, file: string): Promise<vo
     );
   } catch (error) {
     await s3.send(new AbortMultipartUploadCommand({ Bucket: bucket, Key: key, UploadId: uploadId })).catch((abortError: unknown) => {
-      console.error(`could not abort the multipart upload ${uploadId} of ${object.key}: ${abortError instanceof Error ? abortError.message : String(abortError)}`);
+      console.error(
+        `could not abort the multipart upload ${uploadId} of ${object.key}: ${abortError instanceof Error ? abortError.message : String(abortError)}`,
+      );
     });
     throw error;
   }

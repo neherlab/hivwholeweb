@@ -44,10 +44,14 @@ export function checkBuild(files: ReadonlyMap<string, Uint8Array>, options: { an
     ...pages.flatMap(({ name, text }) => includeMarkers(text).map((marker) => `${name}: include marker left: ${marker}`)),
     ...pages.flatMap(({ name, text }) => brokenLinks(text, pageUrl(name), files).map((url) => `${name}: link names no file of the build: ${url}`)),
     ...code.flatMap(({ name, text }) => unversionedStatic(name, text).map((ref) => `${name}: unversioned static reference: ${ref}`)),
-    ...code.filter(({ name }) => !name.endsWith(".css")).flatMap(({ name, text }) => sameHostDataUrls(text).map((url) => `${name}: same-host data URL: ${url}`)),
+    ...code
+      .filter(({ name }) => !name.endsWith(".css"))
+      .flatMap(({ name, text }) => sameHostDataUrls(text).map((url) => `${name}: same-host data URL: ${url}`)),
     ...code.flatMap(({ name, text }) => externalLoads(text, allowed).map((url) => `${name}: loads from another host: ${url}`)),
     ...[...files.keys()].filter((name) => !isStoreKey(keyUrl(objectKey(name)))).map((name) => `${name}: path that no key store key can hold`),
-    ...texts.filter(({ size }) => size > MAX_TEXT_SIZE).map(({ name, size }) => `${name}: ${size} bytes, over the ${MAX_TEXT_SIZE} bytes that CloudFront compresses`),
+    ...texts
+      .filter(({ size }) => size > MAX_TEXT_SIZE)
+      .map(({ name, size }) => `${name}: ${size} bytes, over the ${MAX_TEXT_SIZE} bytes that CloudFront compresses`),
   ];
 }
 

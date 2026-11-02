@@ -85,7 +85,11 @@ export async function ensureArchive(options: {
 }
 
 /** Write a zip of the files, sorted by archive path, and return its digests, computed while writing. */
-export async function writeZip(target: string, entries: readonly { path: string; file: string }[], deflate: boolean): Promise<{ sha256: string; size: number; crc64nvme?: string }> {
+export async function writeZip(
+  target: string,
+  entries: readonly { path: string; file: string }[],
+  deflate: boolean,
+): Promise<{ sha256: string; size: number; crc64nvme?: string }> {
   await mkdir(resolve(target, ".."), { recursive: true });
   const partial = `${target}.partial`;
   const zip = new yazl.ZipFile();

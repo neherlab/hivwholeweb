@@ -36,7 +36,14 @@ export function uploadSteps(files: readonly string[]): string[][] {
  * content type and the Cache-Control of scripts/site-objects.ts, static files
  * before pages.
  */
-export async function uploadBuild(options: { client: S3Client; dist: string; files: readonly string[]; bucket: string; prefix: string; key: (file: string) => string }): Promise<void> {
+export async function uploadBuild(options: {
+  client: S3Client;
+  dist: string;
+  files: readonly string[];
+  bucket: string;
+  prefix: string;
+  key: (file: string) => string;
+}): Promise<void> {
   const { client, dist, files, bucket, prefix, key } = options;
   for (const step of uploadSteps(files)) {
     await mapLimited(step, JOBS, async (file) => {
@@ -58,11 +65,20 @@ export async function uploadBuild(options: { client: S3Client; dist: string; fil
  * `<to><key(file)>`, with their content type and cache headers, static files
  * before pages.
  */
-export async function copyBuild(options: { client: S3Client; files: readonly string[]; bucket: string; from: string; to: string; key: (file: string) => string }): Promise<void> {
+export async function copyBuild(options: {
+  client: S3Client;
+  files: readonly string[];
+  bucket: string;
+  from: string;
+  to: string;
+  key: (file: string) => string;
+}): Promise<void> {
   const { client, files, bucket, from, to, key } = options;
   for (const step of uploadSteps(files)) {
     await mapLimited(step, JOBS, async (file) => {
-      await client.send(new CopyObjectCommand({ Bucket: bucket, Key: `${to}${key(file)}`, CopySource: copySource(bucket, `${from}${key(file)}`), MetadataDirective: "COPY" }));
+      await client.send(
+        new CopyObjectCommand({ Bucket: bucket, Key: `${to}${key(file)}`, CopySource: copySource(bucket, `${from}${key(file)}`), MetadataDirective: "COPY" }),
+      );
     });
   }
 }

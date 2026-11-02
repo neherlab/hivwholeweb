@@ -31,7 +31,9 @@ export async function writeDataManifest(options: { root: string; data: string })
   const downloads = await downloadObjects({ src: join(root, "src"), webData: join(root, "web-data"), data });
   const uncompressed = [...webData, ...downloads.objects].filter((object) => object.size > MAX_COMPRESSED_SIZE && isCompressed(object.contentType));
   if (uncompressed.length > 0) {
-    throw new Error(`objects over ${MAX_COMPRESSED_SIZE} bytes that CloudFront would send uncompressed:\n${uncompressed.map((object) => `${object.key} (${object.size} bytes)`).join("\n")}`);
+    throw new Error(
+      `objects over ${MAX_COMPRESSED_SIZE} bytes that CloudFront would send uncompressed:\n${uncompressed.map((object) => `${object.key} (${object.size} bytes)`).join("\n")}`,
+    );
   }
   const archives = await ensureArchives({ root, data, webData, downloads: downloads.objects, existing });
   archives.forEach(({ object, built }) => console.error(`${built ? "built" : "kept"} ${object.key}`));
