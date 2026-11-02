@@ -446,6 +446,8 @@ function fitLad(samples) {
  * @param {number} x
  */
 function polyval(slope, intercept, x) {
+  // numpy starts Horner's scheme at 0, and 0 * x keeps its NaN for an infinite x.
+  // oxlint-disable-next-line erasing-op
   return (0 * x + slope) * x + intercept;
 }
 
@@ -564,6 +566,8 @@ function pythonAscii(text) {
 }
 
 // Python 2 `unicode.isspace()` characters (Unicode 5.2): the bidirectional classes WS, B, and S, and the category Zs.
+// The class B includes the control characters U+001C to U+001F.
+// oxlint-disable-next-line no-control-regex
 const PYTHON_SPACE = /^[\t-\r\x1c-\x20\x85\xa0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]$/u;
 
 /**
