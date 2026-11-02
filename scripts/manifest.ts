@@ -18,6 +18,7 @@
 import { createHash } from "node:crypto";
 
 import { Crc64Nvme } from "@aws-sdk/crc64-nvme";
+import type { HeadObjectCommandOutput } from "@aws-sdk/client-s3";
 
 /** Cache-Control of the immutable objects: every object except index.json and robots.txt. */
 export const IMMUTABLE = "public, max-age=31536000, immutable";
@@ -187,6 +188,42 @@ export interface Digests {
   sha256: string;
   size: number;
   crc64nvme?: string;
+}
+
+/**
+ * Compare a stored object with the manifest: `match`, `missing`, `differs`
+ * (the manifest's bytes with other headers), or `conflict` (other bytes, or a
+ * checksum that S3 does not report). The bytes match when S3 reports the
+ * manifest's size and checksum: the full-object SHA-256 of a single PUT, or
+ * for an object that needs a multipart upload the full-object CRC64NVME. The
+ * headers match when the content type, cache control, and content disposition
+ * equal the manifest's (none when the manifest names none).
+ */
+export function objectState(object: ManifestObject, stored: StoredObject | undefined): ObjectState {
+  if (stored === undefined) {
+    return "missing";
+  }
+  const sameBytes =
+    stored.ContentLength === object.size &&
+    (object.crc64nvme === undefined
+      ? stored.ChecksumSHA256 === hexToBase64(object.sha256)
+      : stored.ChecksumCRC64NVME === hexToBase64(object.crc64nvme) && stored.ChecksumType === "FULL_OBJECT");
+  if (!sameBytes) {
+    return "conflict";
+  }
+  const sameHeaders = stored.ContentType === object.contentType && stored.CacheControl === object.cacheControl && stored.ContentDisposition === object.contentDisposition;
+  return sameHeaders ? "match" : "differs";
+}
+
+/** Size, checksums, and headers of a stored object, as HeadObject reports them with ChecksumMode ENABLED. */
+export type StoredObject = Pick<HeadObjectCommandOutput, "ContentLength" | "ChecksumSHA256" | "ChecksumCRC64NVME" | "ChecksumType" | "ContentType" | "CacheControl" | "ContentDisposition">;
+
+/** State of a stored object against the manifest. */
+export type ObjectState = "match" | "missing" | "differs" | "conflict";
+
+/** Return a hex digest in the base64 form of the S3 checksum fields. */
+export function hexToBase64(hex: string): string {
+  return Buffer.from(hex, "hex").toString("base64");
 }
 
 /** Contents of data-manifest.json. */

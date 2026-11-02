@@ -23,10 +23,10 @@
 
 import { join, resolve } from "node:path";
 
-import { invalidateAll, requireEnv } from "./aws-cli.ts";
+import { cloudFrontClient, invalidateAll, keyStoreClient, requireEnv, s3Client } from "./aws.ts";
 import { deleteStoreKeys, planStoreSync, putStoreKeys, readStoreKeys, storeDifferences } from "./key-store.ts";
 import { pageStoreKeys } from "./site-objects.ts";
-import { buildFiles, uploadBuild } from "./site-upload.ts";
+import { JOBS, buildFiles, uploadBuild } from "./site-upload.ts";
 
 const args = Bun.argv.slice(2);
 
@@ -40,28 +40,30 @@ const distribution = requireEnv("AWS_CLOUDFRONT_DISTRIBUTION_ID");
 
 const store = requireEnv("AWS_CLOUDFRONT_KVS_ARN");
 
-requireEnv("AWS_DEFAULT_REGION");
+const s3 = s3Client(JOBS);
+
+const keyStore = keyStoreClient();
 
 const files = await buildFiles(DIST);
 
 const expected = pageStoreKeys(files);
 
-const current = await readStoreKeys(store);
+const current = await readStoreKeys(keyStore, store);
 
 console.error(`uploading ${files.length} files to s3://${bucket}/`);
-await uploadBuild({ dist: DIST, files, bucket, prefix: "", key: (file) => file });
+await uploadBuild({ client: s3, dist: DIST, files, bucket, prefix: "", key: (file) => file });
 
 const plan = planStoreSync(current, expected, (key) => key.startsWith("/static-"));
 
 console.error(`adding ${plan.puts.length} keys to the key store`);
-await putStoreKeys(store, plan.puts);
+await putStoreKeys(keyStore, store, plan.puts);
 
-await invalidateAll(distribution);
+await invalidateAll(cloudFrontClient(), distribution);
 
 console.error(`deleting ${plan.deletes.length} keys from the key store`);
-await deleteStoreKeys(store, plan.deletes);
+await deleteStoreKeys(keyStore, store, plan.deletes);
 
-const differences = await storeDifferences(store, plan.final);
+const differences = await storeDifferences(keyStore, store, plan.final);
 
 if (differences.length > 0) {
   console.error(`the key store differs from the expected keys:\n${differences.join("\n")}`);

@@ -9,22 +9,27 @@
 // against the expected key set (storeDifferences). So a path is never in the
 // store before its object exists, and a cached object never outlives its key.
 
-import { aws, stringField } from "./aws-cli.ts";
+import {
+  type CloudFrontKeyValueStoreClient,
+  DescribeKeyValueStoreCommand,
+  type UpdateKeysCommandInput,
+  UpdateKeysCommand,
+  paginateListKeys,
+} from "@aws-sdk/client-cloudfront-keyvaluestore";
 
 /** UpdateKeys changes at most 50 keys, or 3 MB, per request (CloudFront quotas on key value stores). */
 export const UPDATE_BATCH = 50;
 
+/** ListKeys returns at most 50 keys per page; without MaxResults it returns 10. */
+const LIST_PAGE = 50;
+
 // The edge function only tests whether a key exists.
 const VALUE = "1";
 
-/** Read every key of a key store. */
-export async function readStoreKeys(arn: string): Promise<Set<string>> {
-  const listed: unknown = JSON.parse(await aws(["cloudfront-keyvaluestore", "list-keys", "--kvs-arn", arn, "--output", "json"]));
-  const items: unknown = typeof listed === "object" && listed !== null ? Reflect.get(listed, "Items") : undefined;
-  if (!Array.isArray(items)) {
-    throw new Error(`list-keys of ${arn} returned no Items`);
-  }
-  return new Set(items.map((item: unknown) => stringField(item, "Key") ?? ""));
+/** Read every key of a key store, one page after another. */
+export async function readStoreKeys(client: CloudFrontKeyValueStoreClient, arn: string): Promise<Set<string>> {
+  const pages = await Array.fromAsync(paginateListKeys({ client, pageSize: LIST_PAGE }, { KvsARN: arn }));
+  return new Set(pages.flatMap((page) => (page.Items ?? []).map((item) => item.Key ?? "")));
 }
 
 /**
@@ -46,41 +51,48 @@ export interface StorePlan {
   final: Set<string>;
 }
 
+/** Split keys into the batches of the updates: at most UPDATE_BATCH keys each, in order. */
+export function updateBatches(keys: readonly string[]): string[][] {
+  return Array.from({ length: Math.ceil(keys.length / UPDATE_BATCH) }, (_, index) => keys.slice(index * UPDATE_BATCH, (index + 1) * UPDATE_BATCH));
+}
+
 /** Add keys to a store, in batches of at most UPDATE_BATCH keys. */
-export async function putStoreKeys(arn: string, keys: readonly string[]): Promise<void> {
-  await updateInBatches(arn, keys, (batch) => ["--puts", JSON.stringify(batch.map((key) => ({ Key: key, Value: VALUE })))]);
+export async function putStoreKeys(client: CloudFrontKeyValueStoreClient, arn: string, keys: readonly string[]): Promise<void> {
+  await updateInBatches(client, arn, keys, (batch) => ({ Puts: batch.map((key) => ({ Key: key, Value: VALUE })) }));
 }
 
 /** Delete keys from a store, in batches of at most UPDATE_BATCH keys. */
-export async function deleteStoreKeys(arn: string, keys: readonly string[]): Promise<void> {
-  await updateInBatches(arn, keys, (batch) => ["--deletes", JSON.stringify(batch.map((key) => ({ Key: key })))]);
+export async function deleteStoreKeys(client: CloudFrontKeyValueStoreClient, arn: string, keys: readonly string[]): Promise<void> {
+  await updateInBatches(client, arn, keys, (batch) => ({ Deletes: batch.map((key) => ({ Key: key })) }));
 }
 
 /** Return the differences of a store from the expected key set: `missing <key>` and `extra <key>` lines, sorted. */
-export async function storeDifferences(arn: string, expected: ReadonlySet<string>): Promise<string[]> {
-  const stored = await readStoreKeys(arn);
+export async function storeDifferences(client: CloudFrontKeyValueStoreClient, arn: string, expected: ReadonlySet<string>): Promise<string[]> {
+  const stored = await readStoreKeys(client, arn);
   return [
     ...[...expected].filter((key) => !stored.has(key)).map((key) => `missing ${key}`),
     ...[...stored].filter((key) => !expected.has(key)).map((key) => `extra ${key}`),
   ].toSorted();
 }
 
-/** Apply the keys in batches, each with the ETag that the previous update returned. */
-async function updateInBatches(arn: string, keys: readonly string[], change: (batch: readonly string[]) => string[]): Promise<void> {
-  if (keys.length === 0) {
+/** Apply the keys in batches, one after another, each with the ETag that the previous update returned. */
+async function updateInBatches(
+  client: CloudFrontKeyValueStoreClient,
+  arn: string,
+  keys: readonly string[],
+  change: (batch: readonly string[]) => Pick<UpdateKeysCommandInput, "Puts" | "Deletes">,
+): Promise<void> {
+  const batches = updateBatches(keys);
+  if (batches.length === 0) {
     return;
   }
-  const described: unknown = JSON.parse(await aws(["cloudfront-keyvaluestore", "describe-key-value-store", "--kvs-arn", arn, "--output", "json"]));
-  let etag = requireEtag(described, arn);
-  for (let start = 0; start < keys.length; start += UPDATE_BATCH) {
-    const batch = keys.slice(start, start + UPDATE_BATCH);
-    const updated: unknown = JSON.parse(await aws(["cloudfront-keyvaluestore", "update-keys", "--kvs-arn", arn, "--if-match", etag, ...change(batch), "--output", "json"]));
-    etag = requireEtag(updated, arn);
+  let etag = requireEtag((await client.send(new DescribeKeyValueStoreCommand({ KvsARN: arn }))).ETag, arn);
+  for (const batch of batches) {
+    etag = requireEtag((await client.send(new UpdateKeysCommand({ KvsARN: arn, IfMatch: etag, ...change(batch) }))).ETag, arn);
   }
 }
 
-function requireEtag(response: unknown, arn: string): string {
-  const etag = stringField(response, "ETag");
+function requireEtag(etag: string | undefined, arn: string): string {
   if (etag === undefined) {
     throw new Error(`the key store ${arn} returned no ETag`);
   }

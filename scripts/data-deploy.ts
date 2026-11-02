@@ -26,6 +26,9 @@
 // an upload unless its bytes match the manifest's checksum. Objects over 5 GiB
 // go up as multipart uploads with the manifest's full-object CRC64NVME.
 //
+// Every request goes through the AWS SDK, up to JOBS at once over reused
+// connections, so a deploy or check of a few thousand objects takes seconds.
+//
 // When all objects match, deploy adds the new keys to the data store, writes
 // index.json, clears the cache of the data distribution after any write, then
 // deletes the keys that the manifest no longer names and checks the store.
@@ -46,17 +49,41 @@
 //   HIVWHOLEWEB_DATA                 Local data directory, for files whose copy differs and files over 5 GiB (deploy)
 
 import { createHash } from "node:crypto";
-import { mkdir, rm } from "node:fs/promises";
+import { createReadStream } from "node:fs";
 import { dirname, join, resolve } from "node:path";
+import type { Readable } from "node:stream";
 
+import {
+  AbortMultipartUploadCommand,
+  ChecksumAlgorithm,
+  CompleteMultipartUploadCommand,
+  CopyObjectCommand,
+  CreateMultipartUploadCommand,
+  HeadObjectCommand,
+  PutObjectCommand,
+  UploadPartCommand,
+} from "@aws-sdk/client-s3";
 import { Crc64Nvme } from "@aws-sdk/crc64-nvme";
 
-import { aws, awsUnlessMissing, invalidateAll, requireEnv, stringField } from "./aws-cli.ts";
+import { cloudFrontClient, copySource, invalidateAll, isNotFound, keyStoreClient, requireEnv, s3Client } from "./aws.ts";
 import { mapLimited } from "./concurrency.ts";
 import { deleteStoreKeys, planStoreSync, putStoreKeys, readStoreKeys, storeDifferences } from "./key-store.ts";
-import { INDEX_CACHE, INDEX_KEY, type ManifestObject, dataStoreKeys, indexText, partRanges, readManifest, storageKey } from "./manifest.ts";
+import {
+  INDEX_CACHE,
+  INDEX_KEY,
+  type ManifestObject,
+  type ObjectState,
+  type StoredObject,
+  dataStoreKeys,
+  hexToBase64,
+  indexText,
+  objectState,
+  partRanges,
+  readManifest,
+  storageKey,
+} from "./manifest.ts";
 
-const JOBS = 16;
+const JOBS = 64;
 
 /** Part size of the multipart uploads: 64 MiB, within the 5 MiB to 5 GiB that S3 takes, for objects of up to 640 GiB in 10000 parts. */
 const PART_SIZE = 64 * 1024 ** 2;
@@ -81,9 +108,15 @@ const bucket = requireEnv("AWS_S3_BUCKET");
 
 const store = requireEnv("AWS_CLOUDFRONT_KVS_ARN");
 
+const s3 = s3Client(JOBS);
+
+const keyStore = keyStoreClient();
+
 const manifest = await readManifest(manifestPath);
 
-const index: ManifestObject = indexObject(indexText(manifest));
+const indexBytes = new TextEncoder().encode(indexText(manifest));
+
+const index: ManifestObject = indexObject(indexBytes);
 
 const states = await mapLimited(manifest.objects, JOBS, async (object) => ({ object, state: await check(object) }));
 
@@ -97,7 +130,7 @@ if (mode === "verify") {
   if (indexState !== "match") {
     console.log(`differs ${INDEX_KEY}`);
   }
-  const keys = await storeDifferences(store, dataStoreKeys(manifest));
+  const keys = await storeDifferences(keyStore, store, dataStoreKeys(manifest));
   keys.forEach((line) => console.log(line));
   process.exit(pending.length === 0 && indexState === "match" && keys.length === 0 ? 0 : 1);
 }
@@ -120,15 +153,15 @@ if (failed.length > 0) {
   process.exit(1);
 }
 
-const plan = planStoreSync(await readStoreKeys(store), dataStoreKeys(manifest), () => false);
+const plan = planStoreSync(await readStoreKeys(keyStore, store), dataStoreKeys(manifest), () => false);
 
 console.error(`adding ${plan.puts.length} keys to the data store`);
-await putStoreKeys(store, plan.puts);
+await putStoreKeys(keyStore, store, plan.puts);
 
 const indexWritten = (await check(index)) !== "match";
 
 if (indexWritten) {
-  await putIndex();
+  await putObject(index, indexBytes);
   if ((await check(index)) !== "match") {
     console.error(`${INDEX_KEY} differs from the manifest after the write`);
     process.exit(1);
@@ -136,13 +169,13 @@ if (indexWritten) {
 }
 
 if (results.length > 0 || indexWritten) {
-  await invalidateAll(requireEnv("AWS_CLOUDFRONT_DISTRIBUTION_ID"));
+  await invalidateAll(cloudFrontClient(), requireEnv("AWS_CLOUDFRONT_DISTRIBUTION_ID"));
 }
 
 console.error(`deleting ${plan.deletes.length} keys from the data store`);
-await deleteStoreKeys(store, plan.deletes);
+await deleteStoreKeys(keyStore, store, plan.deletes);
 
-const keyDifferences = await storeDifferences(store, plan.final);
+const keyDifferences = await storeDifferences(keyStore, store, plan.final);
 
 if (keyDifferences.length > 0) {
   console.error(`the data store differs from the manifest:\n${keyDifferences.join("\n")}`);
@@ -150,117 +183,84 @@ if (keyDifferences.length > 0) {
 }
 
 /** Write one object that differs from the manifest, and return its state after the write. */
-async function write(object: ManifestObject, state: State): Promise<State> {
+async function write(object: ManifestObject, state: ObjectState): Promise<ObjectState> {
   if (object.crc64nvme !== undefined) {
     await uploadMultipart(object, sourceFile(object));
   } else if (state === "differs") {
-    await aws(["s3api", "copy-object", "--copy-source", `${bucket}/${storageKey(object)}`, "--checksum-algorithm", "SHA256", "--metadata-directive", "REPLACE", ...objectArgs(object)]);
+    await copyObject(object, copySource(bucket, storageKey(object)));
   } else if (object.source.kind === "data") {
-    await aws(["s3api", "copy-object", "--copy-source", `${requireEnv("AWS_S3_SOURCE_BUCKET")}/${object.source.path}`, "--checksum-algorithm", "SHA256", "--metadata-directive", "REPLACE", ...objectArgs(object)]);
+    await copyObject(object, copySource(requireEnv("AWS_S3_SOURCE_BUCKET"), object.source.path));
     const copied = await check(object);
     if (copied === "match") {
       return copied;
     }
     console.error(`copy of ${object.key} differs from the manifest; uploading the local file`);
-    await putObject(object, sourceFile(object));
+    await putObject(object, createReadStream(sourceFile(object)));
   } else {
-    await putObject(object, sourceFile(object));
+    await putObject(object, createReadStream(sourceFile(object)));
   }
   return check(object);
 }
 
-/**
- * Compare the stored object with the manifest, with one HEAD request: `match`,
- * `missing`, `differs` (right bytes, other headers), or `conflict` (other bytes,
- * or a checksum that S3 does not report).
- */
-async function check(object: ManifestObject): Promise<State> {
-  const head = await awsUnlessMissing(["s3api", "head-object", "--bucket", bucket, "--key", storageKey(object), "--checksum-mode", "ENABLED", "--output", "json"]);
-  if (head === undefined) {
-    return "missing";
-  }
-  const stored: unknown = JSON.parse(head);
-  const length: unknown = typeof stored === "object" && stored !== null ? Reflect.get(stored, "ContentLength") : undefined;
-  const sameBytes =
-    length === object.size &&
-    (object.crc64nvme === undefined
-      ? stringField(stored, "ChecksumSHA256") === hexToBase64(object.sha256)
-      : stringField(stored, "ChecksumCRC64NVME") === hexToBase64(object.crc64nvme) && stringField(stored, "ChecksumType") === "FULL_OBJECT");
-  if (!sameBytes) {
-    return "conflict";
-  }
-  const sameHeaders =
-    stringField(stored, "ContentType") === object.contentType &&
-    stringField(stored, "CacheControl") === object.cacheControl &&
-    stringField(stored, "ContentDisposition") === object.contentDisposition;
-  return sameHeaders ? "match" : "differs";
+/** Compare the stored object with the manifest, with one HEAD request (objectState of scripts/manifest.ts). */
+async function check(object: ManifestObject): Promise<ObjectState> {
+  return objectState(object, await head(storageKey(object)));
 }
 
-/** Upload a file in one PUT, which S3 rejects unless its SHA-256 matches the manifest. */
-async function putObject(object: ManifestObject, file: string): Promise<void> {
-  await aws(["s3api", "put-object", "--body", file, "--checksum-sha256", hexToBase64(object.sha256), ...objectArgs(object), "--output", "json"]);
+/** Return the size, checksums, and headers of a stored object, or `undefined` when it is missing. */
+async function head(key: string): Promise<StoredObject | undefined> {
+  try {
+    return await s3.send(new HeadObjectCommand({ Bucket: bucket, Key: key, ChecksumMode: "ENABLED" }));
+  } catch (error) {
+    if (isNotFound(error)) {
+      return undefined;
+    }
+    throw new Error(`HEAD of ${key} failed`, { cause: error });
+  }
+}
+
+/** Copy an object onto its key with the manifest's headers and a full-object SHA-256. */
+async function copyObject(object: ManifestObject, source: string): Promise<void> {
+  await s3.send(new CopyObjectCommand({ ...objectFields(object), CopySource: source, ChecksumAlgorithm: ChecksumAlgorithm.SHA256, MetadataDirective: "REPLACE" }));
+}
+
+/** Upload an object in one PUT, which S3 rejects unless its SHA-256 matches the manifest. */
+async function putObject(object: ManifestObject, body: Uint8Array | Readable): Promise<void> {
+  await s3.send(new PutObjectCommand({ ...objectFields(object), Body: body, ContentLength: object.size, ChecksumSHA256: hexToBase64(object.sha256) }));
 }
 
 /** Upload a file as a multipart upload with the manifest's full-object CRC64NVME, which S3 checks before it stores the object. */
 async function uploadMultipart(object: ManifestObject, file: string): Promise<void> {
-  const crc64nvme = object.crc64nvme ?? "";
-  const created: unknown = JSON.parse(
-    await aws(["s3api", "create-multipart-upload", ...objectArgs(object), "--checksum-algorithm", "CRC64NVME", "--checksum-type", "FULL_OBJECT", "--output", "json"]),
-  );
-  const uploadId = stringField(created, "UploadId");
+  const key = storageKey(object);
+  const created = await s3.send(new CreateMultipartUploadCommand({ ...objectFields(object), ChecksumAlgorithm: ChecksumAlgorithm.CRC64NVME, ChecksumType: "FULL_OBJECT" }));
+  const uploadId = created.UploadId;
   if (uploadId === undefined) {
-    throw new Error(`create-multipart-upload of ${object.key} returned no UploadId`);
+    throw new Error(`CreateMultipartUpload of ${key} returned no UploadId`);
   }
-  const partsDir = join(projectDir, "tmp", "multipart", uploadId);
   try {
-    await mkdir(partsDir, { recursive: true });
     const parts = await mapLimited(partRanges(object.size, PART_SIZE), PART_JOBS, async ({ number, start, end }) => {
       const bytes = await Bun.file(file).slice(start, end).bytes();
-      const partFile = join(partsDir, String(number));
-      await Bun.write(partFile, bytes);
       const checksum = await crc64nvmeBase64(bytes);
-      const uploaded: unknown = JSON.parse(
-        await aws(["s3api", "upload-part", "--bucket", bucket, "--key", storageKey(object), "--upload-id", uploadId, "--part-number", String(number), "--body", partFile, "--checksum-crc64-nvme", checksum, "--output", "json"]),
-      );
-      await rm(partFile);
-      return { ETag: stringField(uploaded, "ETag") ?? "", PartNumber: number, ChecksumCRC64NVME: checksum };
+      const uploaded = await s3.send(new UploadPartCommand({ Bucket: bucket, Key: key, UploadId: uploadId, PartNumber: number, Body: bytes, ChecksumCRC64NVME: checksum }));
+      return { ETag: uploaded.ETag, PartNumber: number, ChecksumCRC64NVME: checksum };
     });
-    await aws([
-      "s3api",
-      "complete-multipart-upload",
-      "--bucket",
-      bucket,
-      "--key",
-      storageKey(object),
-      "--upload-id",
-      uploadId,
-      "--multipart-upload",
-      JSON.stringify({ Parts: parts }),
-      "--checksum-crc64-nvme",
-      hexToBase64(crc64nvme),
-      "--checksum-type",
-      "FULL_OBJECT",
-      "--mpu-object-size",
-      String(object.size),
-      "--output",
-      "json",
-    ]);
+    await s3.send(
+      new CompleteMultipartUploadCommand({
+        Bucket: bucket,
+        Key: key,
+        UploadId: uploadId,
+        MultipartUpload: { Parts: parts },
+        ChecksumCRC64NVME: hexToBase64(object.crc64nvme ?? ""),
+        ChecksumType: "FULL_OBJECT",
+        MpuObjectSize: object.size,
+      }),
+    );
   } catch (error) {
-    await aws(["s3api", "abort-multipart-upload", "--bucket", bucket, "--key", storageKey(object), "--upload-id", uploadId]).catch((abortError: unknown) => {
+    await s3.send(new AbortMultipartUploadCommand({ Bucket: bucket, Key: key, UploadId: uploadId })).catch((abortError: unknown) => {
       console.error(`could not abort the multipart upload ${uploadId} of ${object.key}: ${abortError instanceof Error ? abortError.message : String(abortError)}`);
     });
     throw error;
-  } finally {
-    await rm(partsDir, { recursive: true, force: true });
   }
-}
-
-/** Write index.json from the manifest, last of all objects. */
-async function putIndex(): Promise<void> {
-  const file = join(projectDir, "tmp", "data-deploy", INDEX_KEY);
-  await mkdir(dirname(file), { recursive: true });
-  await Bun.write(file, indexText(manifest));
-  await putObject(index, file);
 }
 
 /** Return the local file of an object's source. */
@@ -275,8 +275,7 @@ function sourceFile(object: ManifestObject): string {
   }
 }
 
-function indexObject(text: string): ManifestObject {
-  const bytes = new TextEncoder().encode(text);
+function indexObject(bytes: Uint8Array): ManifestObject {
   return {
     key: INDEX_KEY,
     source: { kind: "web-data", path: INDEX_KEY },
@@ -287,11 +286,15 @@ function indexObject(text: string): ManifestObject {
   };
 }
 
-function objectArgs(object: ManifestObject): string[] {
-  return [
-    ...["--bucket", bucket, "--key", storageKey(object), "--content-type", object.contentType, "--cache-control", object.cacheControl],
-    ...(object.contentDisposition === undefined ? [] : ["--content-disposition", object.contentDisposition]),
-  ];
+/** Bucket, key, and headers of an object. */
+function objectFields(object: ManifestObject): { Bucket: string; Key: string; ContentType: string; CacheControl: string; ContentDisposition?: string } {
+  return {
+    Bucket: bucket,
+    Key: storageKey(object),
+    ContentType: object.contentType,
+    CacheControl: object.cacheControl,
+    ...(object.contentDisposition === undefined ? {} : { ContentDisposition: object.contentDisposition }),
+  };
 }
 
 async function crc64nvmeBase64(bytes: Uint8Array): Promise<string> {
@@ -299,9 +302,3 @@ async function crc64nvmeBase64(bytes: Uint8Array): Promise<string> {
   crc.update(bytes);
   return Buffer.from(await crc.digest()).toString("base64");
 }
-
-function hexToBase64(hex: string): string {
-  return Buffer.from(hex, "hex").toString("base64");
-}
-
-type State = "match" | "missing" | "differs" | "conflict";

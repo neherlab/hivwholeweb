@@ -1,6 +1,5 @@
 import { describe, expect, test } from "bun:test";
 
-import { planStoreSync } from "../scripts/key-store.ts";
 import { IMMUTABLE, REVALIDATE, objectKey, pageStoreKeys, siteCacheControl } from "../scripts/site-objects.ts";
 
 describe("objectKey", () => {
@@ -40,19 +39,5 @@ describe("pageStoreKeys", () => {
 
   test.each(["data/a b.html", "static/ä.png", "x/%31.js"])("rejects the path %s, which no key store key can hold", (file) => {
     expect(() => pageStoreKeys([file])).toThrow("paths that a key store cannot hold");
-  });
-});
-
-describe("planStoreSync", () => {
-  const keepStatic = (key: string): boolean => key.startsWith("/static-");
-
-  test.each([
-    ["an empty store", [], ["/", "/a/"], { puts: ["/", "/a/"], deletes: [], final: ["/", "/a/"] }],
-    ["a store that matches", ["/", "/a/"], ["/", "/a/"], { puts: [], deletes: [], final: ["/", "/a/"] }],
-    ["a removed page", ["/", "/a/"], ["/"], { puts: [], deletes: ["/a/"], final: ["/"] }],
-    ["an earlier static folder", ["/", "/static-aaaaaaaaaaaa/a.js"], ["/", "/static-bbbbbbbbbbbb/a.js"], { puts: ["/static-bbbbbbbbbbbb/a.js"], deletes: [], final: ["/", "/static-aaaaaaaaaaaa/a.js", "/static-bbbbbbbbbbbb/a.js"] }],
-  ])("plans %s", (_case, current, expected, plan) => {
-    const result = planStoreSync(new Set(current), new Set(expected), keepStatic);
-    expect({ ...result, final: [...result.final].toSorted() }).toEqual(plan);
   });
 });

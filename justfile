@@ -68,11 +68,11 @@ build-dist *args:
     {{dev}} bun scripts/build-dist.ts {{args}}
 
 # Upload dist/ to the production page host and sync its key store (container); see scripts/publish-site.ts
-publish-site:
+publish-site: deps
     {{site_env}} {{dev}} bun scripts/publish-site.ts
 
 # Upload dist/ to preview sites (container); see scripts/publish-preview.ts
-publish-preview +sites:
+publish-preview +sites: deps
     {{preview_env}} {{dev}} bun scripts/publish-preview.ts {{sites}}
 
 # Build the data archives in tmp/archives/ that data-manifest.json does not name yet (container)

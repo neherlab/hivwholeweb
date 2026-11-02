@@ -1,7 +1,21 @@
 import { describe, expect, test } from "bun:test";
 import fc from "fast-check";
 
-import { MAX_SINGLE_PART, indexText, isCompressed, memberHash, needsMultipart, parseManifest, partRanges } from "../scripts/manifest.ts";
+import {
+  ATTACHMENT,
+  IMMUTABLE,
+  MAX_SINGLE_PART,
+  type ManifestObject,
+  type ObjectState,
+  type StoredObject,
+  indexText,
+  isCompressed,
+  memberHash,
+  needsMultipart,
+  objectState,
+  parseManifest,
+  partRanges,
+} from "../scripts/manifest.ts";
 
 describe("needsMultipart", () => {
   // Boundary: S3 takes at most 5 GiB in one PUT.
@@ -87,5 +101,37 @@ describe("parseManifest", () => {
     ["a sha256 that is not 64 hex digits", { kind: "data", path: "x" }, "abc"],
   ])("rejects %s", (_case, source, sha256) => {
     expect(() => parseManifest({ objects: [{ key: "x", source, sha256, size: 1, contentType: "a", cacheControl: "b" }], absent: [] })).toThrow("invalid object in data-manifest.json");
+  });
+});
+
+describe("objectState", () => {
+  // SHA-256 of the empty input (FIPS 180-4); base64 by Python's base64.b64encode.
+  const EMPTY_SHA256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
+  const EMPTY_SHA256_BASE64 = "47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=";
+  // Arbitrary CRC64NVME; base64 by Python's base64.b64encode(bytes.fromhex(...)).
+  const CRC = "ae8b14860a799888";
+  const CRC_BASE64 = "rosUhgp5mIg=";
+
+  const single: ManifestObject = { key: "static/data/a.txt", source: { kind: "data", path: "static/data/a.txt" }, sha256: EMPTY_SHA256, size: 0, contentType: "text/plain", cacheControl: IMMUTABLE, contentDisposition: ATTACHMENT };
+  const { contentDisposition: _disposition, ...inline } = single;
+  const multipart: ManifestObject = { ...single, size: MAX_SINGLE_PART + 1, crc64nvme: CRC };
+  const singleHead: StoredObject = { ContentLength: 0, ChecksumSHA256: EMPTY_SHA256_BASE64, ChecksumType: "FULL_OBJECT", ContentType: "text/plain", CacheControl: IMMUTABLE, ContentDisposition: ATTACHMENT };
+  const multipartHead: StoredObject = { ContentLength: MAX_SINGLE_PART + 1, ChecksumCRC64NVME: CRC_BASE64, ChecksumType: "FULL_OBJECT", ContentType: "text/plain", CacheControl: IMMUTABLE, ContentDisposition: ATTACHMENT };
+
+  test.each<[string, ManifestObject, StoredObject | undefined, ObjectState]>([
+    ["a missing object", single, undefined, "missing"],
+    ["a single PUT with the manifest's SHA-256, size, and headers", single, singleHead, "match"],
+    ["another content type", single, { ...singleHead, ContentType: "application/octet-stream" }, "differs"],
+    ["another cache control", single, { ...singleHead, CacheControl: "public, max-age=3600" }, "differs"],
+    ["no content disposition where the manifest names one", single, { ...singleHead, ContentDisposition: undefined }, "differs"],
+    ["a content disposition where the manifest names none", inline, singleHead, "differs"],
+    ["another SHA-256", single, { ...singleHead, ChecksumSHA256: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=" }, "conflict"],
+    ["another size", single, { ...singleHead, ContentLength: 1 }, "conflict"],
+    ["no checksum reported", single, { ...singleHead, ChecksumSHA256: undefined }, "conflict"],
+    ["a multipart upload with the full-object CRC64NVME", multipart, multipartHead, "match"],
+    ["a multipart upload with a composite checksum", multipart, { ...multipartHead, ChecksumType: "COMPOSITE" }, "conflict"],
+    ["a multipart upload with another CRC64NVME", multipart, { ...multipartHead, ChecksumCRC64NVME: "AAAAAAAAAAA=" }, "conflict"],
+  ])("classifies %s", (_case, object, stored, state) => {
+    expect(objectState(object, stored)).toBe(state);
   });
 });

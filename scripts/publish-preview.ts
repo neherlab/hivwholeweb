@@ -12,10 +12,10 @@
 //
 // The build is uploaded once, to the first site, with the cache headers of the
 // page host (scripts/site-upload.ts), static files before pages. The other
-// sites get copies inside the bucket. Files of an earlier upload that this
-// build lacks stay, so open pages of the earlier version keep working. The
-// preview host has no key store; the upload clears the cache of its
-// distribution.
+// sites get copies of its objects inside the bucket, in the same order. Files
+// of an earlier upload that this build lacks stay, so open pages of the
+// earlier version keep working. The preview host has no key store; the upload
+// clears the cache of its distribution.
 //
 // Prints the URL of each site, one per line, in the order of the arguments.
 //
@@ -28,10 +28,10 @@
 
 import { join, resolve } from "node:path";
 
-import { aws, invalidateAll, requireEnv } from "./aws-cli.ts";
+import { cloudFrontClient, invalidateAll, requireEnv, s3Client } from "./aws.ts";
 import { siteName } from "./preview-sites.ts";
 import { objectKey } from "./site-objects.ts";
-import { buildFiles, uploadBuild } from "./site-upload.ts";
+import { JOBS, buildFiles, copyBuild, uploadBuild } from "./site-upload.ts";
 
 const args = Bun.argv.slice(2);
 
@@ -54,18 +54,20 @@ const domain = requireEnv("PREVIEWS_NEHERLAB_CLICK_DOMAIN");
 
 const sites = names.map(siteName);
 
+const s3 = s3Client(JOBS);
+
 const files = await buildFiles(DIST);
 
 const [first = "", ...others] = sites;
 
 console.error(`uploading ${files.length} files to ${first}`);
-await uploadBuild({ dist: DIST, files, bucket, prefix: `${first}/`, key: objectKey });
+await uploadBuild({ client: s3, dist: DIST, files, bucket, prefix: `${first}/`, key: objectKey });
 
 for (const site of others) {
   console.error(`copying ${first} to ${site}`);
-  await aws(["s3", "cp", "--recursive", "--copy-props", "metadata-directive", "--only-show-errors", `s3://${bucket}/${first}/`, `s3://${bucket}/${site}/`]);
+  await copyBuild({ client: s3, files, bucket, from: `${first}/`, to: `${site}/`, key: objectKey });
 }
 
-await invalidateAll(distribution);
+await invalidateAll(cloudFrontClient(), distribution);
 
 console.log(sites.map((site) => `https://${site}.${domain}`).join("\n"));
