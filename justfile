@@ -10,6 +10,8 @@ dev := if env("DEV_CONTAINER", "") == "1" { "" } else { "dev/dev" }
 # The upload scripts read the AWS settings of one target under the standard AWS
 # names; these maps take them from the prefixed names of .env.example and of the
 # organization secrets.
+preview_env := 'AWS_ACCESS_KEY_ID="${PREVIEWS_NEHERLAB_CLICK_AWS_ACCESS_KEY_ID:-${AWS_ACCESS_KEY_ID:-}}" AWS_SECRET_ACCESS_KEY="${PREVIEWS_NEHERLAB_CLICK_AWS_SECRET_ACCESS_KEY:-${AWS_SECRET_ACCESS_KEY:-}}" AWS_DEFAULT_REGION="${PREVIEWS_NEHERLAB_CLICK_AWS_DEFAULT_REGION:?}" AWS_S3_BUCKET="${PREVIEWS_NEHERLAB_CLICK_AWS_S3_BUCKET:?}" AWS_CLOUDFRONT_DISTRIBUTION_ID="${PREVIEWS_NEHERLAB_CLICK_AWS_CLOUDFRONT_DISTRIBUTION_ID:?}"'
+site_env := 'AWS_DEFAULT_REGION="${HIVWHOLEWEB_SITE_AWS_DEFAULT_REGION:?}" AWS_S3_BUCKET="${HIVWHOLEWEB_SITE_AWS_S3_BUCKET:?}" AWS_CLOUDFRONT_DISTRIBUTION_ID="${HIVWHOLEWEB_SITE_AWS_CLOUDFRONT_DISTRIBUTION_ID:?}" AWS_CLOUDFRONT_KVS_ARN="${HIVWHOLEWEB_SITE_AWS_KVS_ARN:?}"'
 data_env := 'AWS_DEFAULT_REGION="${HIVWHOLEWEB_DATA_AWS_DEFAULT_REGION:?}" AWS_S3_BUCKET="${HIVWHOLEWEB_DATA_AWS_S3_BUCKET:?}" AWS_S3_SOURCE_BUCKET="${HIVWHOLEWEB_DATA_AWS_S3_SOURCE_BUCKET:?}" AWS_CLOUDFRONT_DISTRIBUTION_ID="${HIVWHOLEWEB_DATA_AWS_CLOUDFRONT_DISTRIBUTION_ID:?}" AWS_CLOUDFRONT_KVS_ARN="${HIVWHOLEWEB_DATA_AWS_KVS_ARN:?}"'
 
 git_common_dir := `git rev-parse --path-format=absolute --git-common-dir`
@@ -59,6 +61,14 @@ typecheck: deps
 # Write dist/, the page host files, from src/ (container); see scripts/build.ts
 build-dist *args:
     {{dev}} bun scripts/build-dist.ts {{args}}
+
+# Upload dist/ to the production page host and sync its key store (container); see scripts/publish-site.ts
+publish-site:
+    {{site_env}} {{dev}} bun scripts/publish-site.ts
+
+# Upload dist/ to preview sites (container); see scripts/publish-preview.ts
+publish-preview +sites:
+    {{preview_env}} {{dev}} bun scripts/publish-preview.ts {{sites}}
 
 # Build the data archives in tmp/archives/ that data-manifest.json does not name yet (container)
 data-archives: deps
