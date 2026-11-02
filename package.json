@@ -1,0 +1,14 @@
+{
+  "name": "hivwholeweb-static",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "bun test server tests",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/bun": "1.4.3",
+    "fast-check": "4.10.2",
+    "typescript": "7.0.2"
+  }
+}

@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+#
+# Usage: dev/dev [command [args...]]
+#
+# Run a command in the project container. With no command, start a shell. The
+# image is built on first use and rebuilt when one of its build inputs changes.
+#
+# The checkout is mounted read-write at its host path, so paths match the host.
+# The git metadata of the main checkout is mounted read-only. The data directory
+# (HIVWHOLEWEB_DATA) is mounted read-only at its host path when it exists.
+#
+# Environment:
+#   DEV_PUBLISH   Port to publish on 127.0.0.1, for `dev/dev just serve`
+#   AWS_*, PREVIEWS_NEHERLAB_CLICK_*, HIVWHOLEWEB_DATA_AWS_*, HIVWHOLEWEB_DATA_URL,
+#   HIVWHOLEWEB_PLAUSIBLE_DOMAIN
+#                 Forwarded when set, for the build and the uploads (.env.example)
+#
+set -euo pipefail
+
+this_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+project_dir="$(dirname "${this_dir}")"
+git_common_dir="$(git -C "${project_dir}" rev-parse --path-format=absolute --git-common-dir)"
+
+data_dir="${HIVWHOLEWEB_DATA:-$(dirname "$(dirname "${git_common_dir}")")/hivwholeweb_data}"
+
+image_name="hivwholeweb/dev"
+build_inputs=(
+  "${this_dir}/Dockerfile"
+  "${this_dir}/Dockerfile.dockerignore"
+  "${project_dir}/mise.toml"
+  "${project_dir}/mise.lock"
+)
+image_tag="$(cat "${build_inputs[@]}" | sha256sum | cut -c1-16)"
+
+if ! docker image inspect "${image_name}:${image_tag}" &>/dev/null; then
+  docker build --quiet \
+    --file="${this_dir}/Dockerfile" \
+    --tag="${image_name}:${image_tag}" \
+    "${project_dir}" >/dev/null
+fi
+
+flags=(
+  --rm
+  --interactive
+  --init
+  --cap-drop=ALL
+  --user="$(id -u):$(id -g)"
+  --env="HOME=/tmp/home"
+  --env="DEV_CONTAINER=1"
+  --env="TERM=${TERM:-xterm}"
+  --env="HIVWHOLEWEB_DATA=${data_dir}"
+  --volume="${project_dir}:${project_dir}"
+  --volume="${git_common_dir}:${git_common_dir}:ro"
+  --workdir="${PWD}"
+)
+if [[ -t 0 ]]; then
+  flags+=(--tty)
+fi
+if [[ -d "${data_dir}" ]]; then
+  flags+=(--volume="${data_dir}:${data_dir}:ro")
+fi
+while IFS= read -r name; do
+  flags+=(--env="${name}")
+done < <(compgen -e | grep -E '^(AWS_|PREVIEWS_NEHERLAB_CLICK_|HIVWHOLEWEB_DATA_AWS_|HIVWHOLEWEB_DATA_URL$|HIVWHOLEWEB_PLAUSIBLE_DOMAIN$)' || true)
+if [[ -n "${DEV_PUBLISH:-}" ]]; then
+  flags+=(--publish="127.0.0.1:${DEV_PUBLISH}:${DEV_PUBLISH}" --env="PORT=${DEV_PUBLISH}" --env="HOST=0.0.0.0")
+fi
+
+exec docker run "${flags[@]}" "${image_name}:${image_tag}" "${@:-bash}"

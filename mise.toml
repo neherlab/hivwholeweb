@@ -1,0 +1,17 @@
+# Tools of the static site, for the host and for the project container (dev/dev).
+# mise installs each tool at the URL and checksum of mise.lock. A release must be
+# at least seven days old before it can be pinned here.
+
+[settings]
+lockfile = true
+locked = true
+minimum_release_age = "7d"
+
+[tools]
+actionlint = "1.7.12"
+aws-cli = "2.38.4"
+bun = "1.4.4"
+jq = "1.8.2"
+just = "1.58.0"
+node = "24.22.1"
+shellcheck = "0.11.0"

@@ -1,0 +1,9 @@
+telemetry = false
+
+# Exact versions in package.json, and a seven-day quarantine for new releases.
+# No packages fetched at run time: a missing install fails instead of
+# bypassing bun.lock (just deps installs it).
+[install]
+exact = true
+minimumReleaseAge = 604800
+auto = "disable"
