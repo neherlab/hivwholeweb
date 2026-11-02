@@ -1,179 +1,207 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <!-- HEAD -->
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    
-      <title>Controls - Intrapatient HIV evolution</title>
-    
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Controls - Intrapatient HIV evolution</title>
 
     <!-- include head -->
-    
-
   </head>
   <!-- HEAD -->
   <!-- BODY -->
-  <body >
+  <body>
     <!-- TOP NAVBAR -->
     <!-- include nav -->
     <!-- TOP NAVBAR -->
     <!-- CONTENT -->
-    
 
-<div class="container">
-  <!-- header -->
-  <div class="panel header-panel">
-    <div class="panel-body">
-      <h4 class="pagetitle"><span class="glyphicon glyphicon-stats"></span>  Sequencing methodology and control experiments</h4>
-    </div>
-  </div>
-  <div class="panel-group">
-    <!-- OVERVIEW -->
-    <div class="panel tab-panel"> 
-      <div class="panel-heading tab">
-        <span class="glyphicon glyphicon-minus"></span>
-        <a data-toggle="collapse" data-parent="#expand" href="#sampleColl">Overview of sequencing and analysis pipeline</a>
-      </div>
-      <div id="sampleColl" class="panel-collapse collapse in">
+    <div class="container">
+      <!-- header -->
+      <div class="panel header-panel">
         <div class="panel-body">
-          <div display='block' align='center' style='padding-bottom:20px'>
-            <img src='/static/images/controls/sketchPrep.svg' width='80%'>
-          </div>
-          <div class="text-explanation"><!-- NOTE FOR BIANCA: this should be a list, please format it according to your stylesheets -->
-<b>Overview of library preparation and sequencing:</b>
-<ol>
-<li>Start from 400 µl frozen serum sample.</li>
-<li> Extract total RNA with double elution for maximal template recovery. </li>
-<li> cDNA synthesis and 30 cycles of PCR using <i>life technologies SuperScript® III One-Step RT-PCR System with Platinum® Taq High Fidelity DNA Polymerase</i>. PCR is done separately for six overlapping fragments labeled F1 through F6.</li>
-<li> Library preparation using <i>Illumina Nextera XT® sample preparation kit</i>, followed by column purification. Size selection with the <i>Sage Science BluePippin®</i> with cutoffs at 550 and 900 bp. These sizes include the library adaptors.</li>
-<li> Sequencing on <i>illumina MiSeq®</i> using 500 or 600 cycles kit. </li>
-<li> Mapping and cleaning of the sequencing reads (in house Python application). </li>
-</ol></div>
+          <h4 class="pagetitle"><span class="glyphicon glyphicon-stats"></span> Sequencing methodology and control experiments</h4>
         </div>
       </div>
-    </div>
-    <!-- OVERVIEW -->
-    <!-- SEQ QUALITY -->
-    <div class="panel tab-panel"> 
-      <div class="panel-heading tab">
-        <span class="glyphicon glyphicon-minus"></span>
-        <a data-toggle="collapse" data-parent="#expand" href="#seqQual">Sequencing quality</a>
-      </div>
-      <div id="seqQual" class="panel-collapse collapse in">
-        <div class="panel-body">
-          <div display='block' align='center' style='padding-bottom:20px'>
-            <img src='/static/images/controls/quality_along_read.svg' width='80%'>
+      <div class="panel-group">
+        <!-- OVERVIEW -->
+        <div class="panel tab-panel">
+          <div class="panel-heading tab">
+            <span class="glyphicon glyphicon-minus"></span>
+            <a data-toggle="collapse" data-parent="#expand" href="#sampleColl">Overview of sequencing and analysis pipeline</a>
           </div>
-          <div class="text-explanation"><b>Sequencing quality:</b>
-The graphs show the fraction of bases sequenced with a quality better than the indicated threshold for each position in read 1 and read 2 (this run used a 3x250 cycle kit). Phred qualities are estimate by CASAVA 1.8 during base calling. Things to note:
-<ul>
-<li>a slow linear decrease even for the threshold Q10. This is due to short inserts escaping size selection</li>
-<li>quality deteriorates towards the end of read 2, likely due to phasing errors and optical overlap of bridge-amplified clusters on the flow cell. </li>
-<li>We typically used a Phred quality threshold of 30 for our analysis, corresponding to a miscalling rate of 0.1%.</li>
-</ul></div>
-        </div>
-      </div>
-    </div>
-    <!-- SEQ QUALITY -->
-    <!-- PHRED -->
-    <div class="panel tab-panel"> 
-      <div class="panel-heading tab">
-        <span class="glyphicon glyphicon-minus"></span>
-        <a data-toggle="collapse" data-parent="#expand" href="#phredQual">Phred quality assessment</a>
-      </div>
-      <div id="phredQual" class="panel-collapse collapse in">
-        <div class="panel-body">
-          <div display='block' align='center' style='padding-bottom:20px'>
-            <img src='/static/images/controls/phix_phred_errors.svg' width='50%'>
+          <div id="sampleColl" class="panel-collapse collapse in">
+            <div class="panel-body">
+              <div display="block" align="center" style="padding-bottom: 20px">
+                <img src="/static/images/controls/sketchPrep.svg" width="80%" />
+              </div>
+              <div class="text-explanation">
+                <!-- NOTE FOR BIANCA: this should be a list, please format it according to your stylesheets -->
+                <b>Overview of library preparation and sequencing:</b>
+                <ol>
+                  <li>Start from 400 µl frozen serum sample.</li>
+                  <li>Extract total RNA with double elution for maximal template recovery.</li>
+                  <li>
+                    cDNA synthesis and 30 cycles of PCR using
+                    <i>life technologies SuperScript® III One-Step RT-PCR System with Platinum® Taq High Fidelity DNA Polymerase</i>. PCR is done separately for
+                    six overlapping fragments labeled F1 through F6.
+                  </li>
+                  <li>
+                    Library preparation using <i>Illumina Nextera XT® sample preparation kit</i>, followed by column purification. Size selection with the
+                    <i>Sage Science BluePippin®</i> with cutoffs at 550 and 900 bp. These sizes include the library adaptors.
+                  </li>
+                  <li>Sequencing on <i>illumina MiSeq®</i> using 500 or 600 cycles kit.</li>
+                  <li>Mapping and cleaning of the sequencing reads (in house Python application).</li>
+                </ol>
+              </div>
+            </div>
           </div>
-          <div class="text-explanation"><b>Phred scores and actual error rates:</b>
-<ul>
-    <li>PhiX control (provided by Illumina) was spiked in all sequencing run to monitor sequencing errors.</li>
-    <li>Reported Phred quality correlates well with the actual error rate down to 0.1% (Q30)</li>
-    <li>In HIV amplicons, other sources of errors, such as PCR, dominate over sequencing errors (after filtering for >Q30)</li>
-</ul></div>
         </div>
-      </div>
-    </div>
-    <!-- PHRED -->
-    <!-- SEQ ERRORS -->
-    <div class="panel tab-panel"> 
-      <div class="panel-heading tab">
-        <span class="glyphicon glyphicon-minus"></span>
-        <a data-toggle="collapse" data-parent="#expand" href="#seqErr">Sequencing errors</a>
-      </div>
-      <div id="seqErr" class="panel-collapse collapse in">
-        <div class="panel-body">
-          <div display='block' align='center' style='padding-bottom:20px'>
-            <img src='/static/images/controls/ref_minor_allele.svg' width='80%'>
+        <!-- OVERVIEW -->
+        <!-- SEQ QUALITY -->
+        <div class="panel tab-panel">
+          <div class="panel-heading tab">
+            <span class="glyphicon glyphicon-minus"></span>
+            <a data-toggle="collapse" data-parent="#expand" href="#seqQual">Sequencing quality</a>
           </div>
-          <div class="text-explanation"><b>Sequencing errors:</b>
-A reference HIV-1 strain expressed from a plasmid (NL4-3) was amplified and sequenced to measure sequencing errors and, to some extent, PCR errors. The error level was around 0.1-0.2%.</div>
-        </div>
-      </div>
-    </div>
-    <!-- SEQ ERRORS -->
-    <!-- VARIANT FREQUENCIES -->
-    <div class="panel tab-panel"> 
-      <div class="panel-heading tab">
-        <span class="glyphicon glyphicon-minus"></span>
-        <a data-toggle="collapse" data-parent="#expand" href="#afOverlap">Reproducibility of variant frequencies</a>
-      </div>
-      <div id="afOverlap" class="panel-collapse collapse in">
-        <div class="panel-body">
-          <div display='block' align='center' style='padding-bottom:20px'>
-            <img src='/static/images/controls/allele_frequency_overlap.png' width='60%'>
+          <div id="seqQual" class="panel-collapse collapse in">
+            <div class="panel-body">
+              <div display="block" align="center" style="padding-bottom: 20px">
+                <img src="/static/images/controls/quality_along_read.svg" width="80%" />
+              </div>
+              <div class="text-explanation">
+                <b>Sequencing quality:</b>
+                The graphs show the fraction of bases sequenced with a quality better than the indicated threshold for each position in read 1 and read 2 (this
+                run used a 3x250 cycle kit). Phred qualities are estimate by CASAVA 1.8 during base calling. Things to note:
+                <ul>
+                  <li>a slow linear decrease even for the threshold Q10. This is due to short inserts escaping size selection</li>
+                  <li>
+                    quality deteriorates towards the end of read 2, likely due to phasing errors and optical overlap of bridge-amplified clusters on the flow
+                    cell.
+                  </li>
+                  <li>We typically used a Phred quality threshold of 30 for our analysis, corresponding to a miscalling rate of 0.1%.</li>
+                </ul>
+              </div>
+            </div>
           </div>
-          <div class="text-explanation"><b>Variant frequencies in fragment overlaps</b>
-<ul>
-<li>The six fragments F1 to F6 overlap between 200 and 350 bases</li>
-<li>Variants in these overlaps are sequenced in replicate in a completely independent fashion (starting at reverse transcription)</li>
-<li>The figure shows the correlation between variant frequencies in the leading and trailing fragments, deviations from the diagonal signal PCR bias or low template input</li>
-<li>Variant frequencies in overlaps are used to quantify the accuracy of frequency estimation for each sample</li>
-<li>For each sample and fragment, we quantify the variant frequency accuracy by an <i>effective template number</i>. Effective template numbers are several hundreds for most samples and fragments, but tend to be low for F5.</li>
-</ul></div>
         </div>
-      </div>
-    </div>
-    <!-- VARIANT FREQUENCIES -->
-    <!-- INSERT SIZE DISTRIBUTION -->
-    <div class="panel tab-panel"> 
-      <div class="panel-heading tab">
-        <span class="glyphicon glyphicon-minus"></span>
-        <a data-toggle="collapse" data-parent="#expand" href="#nextera">Insert size distribution</a>
-      </div>
-      <div id="nextera" class="panel-collapse collapse in">
-        <div class="panel-body">
-          <div display='block' align='center' style='padding-bottom:20px'>
-            <img src='/static/images/controls/insert_size_distribution.svg' width='80%'>
+        <!-- SEQ QUALITY -->
+        <!-- PHRED -->
+        <div class="panel tab-panel">
+          <div class="panel-heading tab">
+            <span class="glyphicon glyphicon-minus"></span>
+            <a data-toggle="collapse" data-parent="#expand" href="#phredQual">Phred quality assessment</a>
           </div>
-          <div class="text-explanation"><b>Linkage and insert sizes:</b>
-<ul>
-<li>To obtain linkage information, the we strove to obtain long paired reads that make optimal use of the 2x250 cycles kits used for sequencing.</li>
-<li> The original <i>Illumina NexteraXT®</i> protocol yields reads much shorter than the desired insert size.</li>
-<li>Additional stringent size selection with the <i>Sage Science BluePippin®</i> resulted in inserts ~500bp</li>
-</ul></div>
+          <div id="phredQual" class="panel-collapse collapse in">
+            <div class="panel-body">
+              <div display="block" align="center" style="padding-bottom: 20px">
+                <img src="/static/images/controls/phix_phred_errors.svg" width="50%" />
+              </div>
+              <div class="text-explanation">
+                <b>Phred scores and actual error rates:</b>
+                <ul>
+                  <li>PhiX control (provided by Illumina) was spiked in all sequencing run to monitor sequencing errors.</li>
+                  <li>Reported Phred quality correlates well with the actual error rate down to 0.1% (Q30)</li>
+                  <li>In HIV amplicons, other sources of errors, such as PCR, dominate over sequencing errors (after filtering for >Q30)</li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
+        <!-- PHRED -->
+        <!-- SEQ ERRORS -->
+        <div class="panel tab-panel">
+          <div class="panel-heading tab">
+            <span class="glyphicon glyphicon-minus"></span>
+            <a data-toggle="collapse" data-parent="#expand" href="#seqErr">Sequencing errors</a>
+          </div>
+          <div id="seqErr" class="panel-collapse collapse in">
+            <div class="panel-body">
+              <div display="block" align="center" style="padding-bottom: 20px">
+                <img src="/static/images/controls/ref_minor_allele.svg" width="80%" />
+              </div>
+              <div class="text-explanation">
+                <b>Sequencing errors:</b> A reference HIV-1 strain expressed from a plasmid (NL4-3) was amplified and sequenced to measure sequencing errors
+                and, to some extent, PCR errors. The error level was around 0.1-0.2%.
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- SEQ ERRORS -->
+        <!-- VARIANT FREQUENCIES -->
+        <div class="panel tab-panel">
+          <div class="panel-heading tab">
+            <span class="glyphicon glyphicon-minus"></span>
+            <a data-toggle="collapse" data-parent="#expand" href="#afOverlap">Reproducibility of variant frequencies</a>
+          </div>
+          <div id="afOverlap" class="panel-collapse collapse in">
+            <div class="panel-body">
+              <div display="block" align="center" style="padding-bottom: 20px">
+                <img src="/static/images/controls/allele_frequency_overlap.png" width="60%" />
+              </div>
+              <div class="text-explanation">
+                <b>Variant frequencies in fragment overlaps</b>
+                <ul>
+                  <li>The six fragments F1 to F6 overlap between 200 and 350 bases</li>
+                  <li>Variants in these overlaps are sequenced in replicate in a completely independent fashion (starting at reverse transcription)</li>
+                  <li>
+                    The figure shows the correlation between variant frequencies in the leading and trailing fragments, deviations from the diagonal signal PCR
+                    bias or low template input
+                  </li>
+                  <li>Variant frequencies in overlaps are used to quantify the accuracy of frequency estimation for each sample</li>
+                  <li>
+                    For each sample and fragment, we quantify the variant frequency accuracy by an <i>effective template number</i>. Effective template numbers
+                    are several hundreds for most samples and fragments, but tend to be low for F5.
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- VARIANT FREQUENCIES -->
+        <!-- INSERT SIZE DISTRIBUTION -->
+        <div class="panel tab-panel">
+          <div class="panel-heading tab">
+            <span class="glyphicon glyphicon-minus"></span>
+            <a data-toggle="collapse" data-parent="#expand" href="#nextera">Insert size distribution</a>
+          </div>
+          <div id="nextera" class="panel-collapse collapse in">
+            <div class="panel-body">
+              <div display="block" align="center" style="padding-bottom: 20px">
+                <img src="/static/images/controls/insert_size_distribution.svg" width="80%" />
+              </div>
+              <div class="text-explanation">
+                <b>Linkage and insert sizes:</b>
+                <ul>
+                  <li>
+                    To obtain linkage information, the we strove to obtain long paired reads that make optimal use of the 2x250 cycles kits used for sequencing.
+                  </li>
+                  <li>The original <i>Illumina NexteraXT®</i> protocol yields reads much shorter than the desired insert size.</li>
+                  <li>Additional stringent size selection with the <i>Sage Science BluePippin®</i> resulted in inserts ~500bp</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- INSERT SIZE DISTRIBUTION -->
       </div>
     </div>
-    <!-- INSERT SIZE DISTRIBUTION -->
-  </div>
-</div>
-
 
     <!-- CONTENT -->
     <!-- FOOTER -->
-    
+
     <div class="nav footer navbar-fixed-bottom">
       <div class="container-fluid">
         <ul class="nav navbar-nav navbar-right">
-          <li class="text-muted"><a href="http://elifesciences.org/content/4/e11282"  target="_blank">Fabio Zanini <i>et al.</i>, eLIFE, <i>e11282</i>.</a></li>
+          <li class="text-muted">
+            <a href="http://elifesciences.org/content/4/e11282" target="_blank">Fabio Zanini <i>et al.</i>, eLIFE, <i>e11282</i>.</a>
+          </li>
         </ul>
       </div>
     </div>
-    
+
     <!-- FOOTER -->
   </body>
   <!-- BODY -->

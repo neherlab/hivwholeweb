@@ -1,42 +1,45 @@
-<script id="plausible" defer data-domain="hiv.biozentrum.unibas.ch" src="https://plausible.io/js/script.compat.file-downloads.hash.local.outbound-links.js"></script>
+<script
+  id="plausible"
+  defer
+  data-domain="hiv.biozentrum.unibas.ch"
+  src="https://plausible.io/js/script.compat.file-downloads.hash.local.outbound-links.js"
+></script>
 
-    <!-- Load everything in the HEAD even if it slows down a bit, then it's cached -->
-    <script src="/static/components/jquery/dist/jquery.min.js"></script>
-    <!-- Bootstrap components -->
-<link rel="stylesheet" href="/static/components/bootstrap/dist/css/bootstrap.min.css">
+<!-- Load everything in the HEAD even if it slows down a bit, then it's cached -->
+<script src="/static/components/jquery/dist/jquery.min.js"></script>
+<!-- Bootstrap components -->
+<link rel="stylesheet" href="/static/components/bootstrap/dist/css/bootstrap.min.css" />
 <script src="/static/components/bootstrap/dist/js/bootstrap.min.js"></script>
 <!-- end of bootstrap -->
-    <!-- D3.js components -->
-<link href="/static/css/d3_plots.css" rel="stylesheet" type="text/css">
+<!-- D3.js components -->
+<link href="/static/css/d3_plots.css" rel="stylesheet" type="text/css" />
 <script src="/static/components/d3/d3.min.js" charset="utf-8"></script>
 
 <!-- d3-tip for tooltips -->
-<link rel="stylesheet" href="/static/css/d3-tip.css">
+<link rel="stylesheet" href="/static/css/d3-tip.css" />
 <script type="text/javascript" src="/static/components/d3-tip/index.js"></script>
 <!-- end of D3.js components -->
 
 <!-- global variables -->
 <script type="text/javascript" src="/static/js/utils.js"></script>
-    <!-- support JS code for browser cross-compatibility -->
+<!-- support JS code for browser cross-compatibility -->
 <!-- nice IE has no way of finding a string in a list of strings (!) -->
 <script type="text/javascript">
-if (!Array.prototype.indexOf) {
-    Array.prototype.indexOf = function(item) {
-        var i = this.length;
-        while (i--)
-           if (this[i] === item) return i;
-        return -1;
-    }
-}
+  if (!Array.prototype.indexOf) {
+    Array.prototype.indexOf = function (item) {
+      var i = this.length;
+      while (i--) if (this[i] === item) return i;
+      return -1;
+    };
+  }
 
-
- <!-- JavaScript has no intrinsic way to determine numeric -->
- function isNumeric(n) {
-   return !isNaN(parseFloat(n)) && isFinite(n);
- }
- </script>
- <!-- end of cross-compatibility support -->
-    <link href="/static/css/starter-template.css" rel="stylesheet">
-    <link href="/static/css/hivevo_style.css" rel="stylesheet">
-    <!-- font for the website -->
-    <link rel="stylesheet" type="text/css" href="/static/css/fonts.css">
+  <!-- JavaScript has no intrinsic way to determine numeric -->
+  function isNumeric(n) {
+    return !isNaN(parseFloat(n)) && isFinite(n);
+  }
+</script>
+<!-- end of cross-compatibility support -->
+<link href="/static/css/starter-template.css" rel="stylesheet" />
+<link href="/static/css/hivevo_style.css" rel="stylesheet" />
+<!-- font for the website -->
+<link rel="stylesheet" type="text/css" href="/static/css/fonts.css" />

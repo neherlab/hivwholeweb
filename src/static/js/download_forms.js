@@ -8,7 +8,9 @@ document.addEventListener("submit", function (event) {
     return;
   }
   event.preventDefault();
-  window.location.assign(template.replace(/\{(\w+)\}/g, function (match, name) {
-    return encodeURIComponent(form.elements[name].value);
-  }));
+  window.location.assign(
+    template.replace(/\{(\w+)\}/g, function (match, name) {
+      return encodeURIComponent(form.elements[name].value);
+    }),
+  );
 });

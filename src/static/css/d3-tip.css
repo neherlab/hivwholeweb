@@ -6,7 +6,7 @@
   color: #fff;
   border-radius: 2px;
   pointer-events: none;
-  
+
   /* This is needed to make sure the tooltip is always on top of Bootstrap */
   position: relative;
   z-index: 1000;

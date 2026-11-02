@@ -1,15 +1,13 @@
-.method-content
-{
+.method-content {
   position: relative;
-  top: 0px; 
+  top: 0px;
   bottom: 0px;
   left: 310px;
   right: 0px;
   max-width: 900px;
   text-align: center;
 }
-.method-sidebar
-{
+.method-sidebar {
   padding-top: 70px;
   position: fixed;
   top: 0px;
@@ -23,7 +21,7 @@
 .sidebar-panel {
   width: 290px;
   text-align: left;
-  border:1px lightgrey solid;
+  border: 1px lightgrey solid;
 }
 .panel-heading.side {
   color: dimgrey;
@@ -46,9 +44,9 @@
 .list-group-item.active {
   background-color: grey;
   color: white;
-  border-color:lightgrey;
+  border-color: lightgrey;
 }
 .list-group-item.active:hover {
-  background-color:grey;
+  background-color: grey;
   border-color: lightgrey;
 }

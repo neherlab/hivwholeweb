@@ -62,12 +62,11 @@ a:hover.navbar-brand {
     overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
     border-right: 0;
 
-  /* transition speed when toggle */
-  -webkit-transition: all 0.5s ease;
-  -moz-transition: all 0.5s ease;
-  -o-transition: all 0.5s ease;
-  transition: all 0.5s ease;
-
+    /* transition speed when toggle */
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
   }
 }
 
@@ -87,7 +86,7 @@ a:hover.navbar-brand {
 
 @media (min-width: 768px) {
   .affix {
-      position:fixed;
+    position: fixed;
   }
 }
 
@@ -98,7 +97,6 @@ a:hover.navbar-brand {
   -moz-transition: all 0.5s ease;
   -o-transition: all 0.5s ease;
   transition: all 0.5s ease;
-
 }
 @media (min-width: 768px) {
   .main {
@@ -110,9 +108,9 @@ a:hover.navbar-brand {
 /* toggle sidebar only on big screens */
 @media (min-width: 768px) {
   .sidebar.toggled {
-     margin-left: -270px;
-    }
-  
+    margin-left: -270px;
+  }
+
   .main.toggled {
     margin-left: 50px;
   }

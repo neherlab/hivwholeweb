@@ -1,9 +1,9 @@
 /* general styles */
 .container {
   padding-top: 20px;
-  max-width: 1500px
+  max-width: 1500px;
 }
-.text-explanation{
+.text-explanation {
   /*font: 12px sans-serif;*/
   max-width: 600px;
   margin-top: 20px;
@@ -13,7 +13,7 @@
   text-align: justify;
   line-height: 1.5;
 }
-.text-intro{
+.text-intro {
   /*font: 12px sans-serif;*/
   max-width: 600px;
   margin-top: 20px;
@@ -24,9 +24,9 @@
   line-height: 1.5;
 }
 
-.col-centered{
-    float: none;
-    margin: 0 auto;
+.col-centered {
+  float: none;
+  margin: 0 auto;
 }
 
 .alert {
@@ -73,7 +73,7 @@ body {
 .numbers {
   text-align: right;
 }
-.tablelinks:hover{
+.tablelinks:hover {
   background-color: whitesmoke;
   cursor: pointer;
 }
@@ -162,7 +162,7 @@ p.list {
 .axis .domain {
   fill: none;
   stroke: #000;
-  stroke-opacity: .3;
+  stroke-opacity: 0.3;
   stroke-width: 10px;
   stroke-linecap: round;
 }
@@ -177,16 +177,15 @@ p.list {
 .slider .handle {
   fill: #fff;
   stroke: #000;
-  stroke-opacity: .5;
+  stroke-opacity: 0.5;
   stroke-width: 1.25px;
 }
-
 
 /* tree styles */
 
 .treetip {
   fill: "white";
-  fill-opacity: 0.0;
+  fill-opacity: 0;
   stroke-width: 0;
 }
 
@@ -194,7 +193,6 @@ p.list {
   fill-opacity: 0.8;
   stroke-width: 2;
 }
-
 
 .highlight {
   stroke: steelblue;
@@ -232,7 +230,6 @@ p.list {
   stroke-width: 0;
 }
 
-
 /*spacers*/
 
 .hugespacer {
@@ -255,7 +252,6 @@ p.list {
 .featurerect {
   fill-opacity: 0.5;
   stroke-width: 1;
-  stroke:black;
-  text-anchor:middle; 
+  stroke: black;
+  text-anchor: middle;
 }
-

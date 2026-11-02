@@ -1,319 +1,281 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <!-- HEAD -->
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    
-      <title>Region page - Intrapatient HIV evolution</title>
-    
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Region page - Intrapatient HIV evolution</title>
 
     <!-- include head -->
-    
 
-<link href="../static/css/region.css" rel="stylesheet">
-
-
+    <link href="../static/css/region.css" rel="stylesheet" />
   </head>
   <!-- HEAD -->
   <!-- BODY -->
-  <body >
+  <body>
     <!-- TOP NAVBAR -->
     <!-- include nav -->
     <!-- TOP NAVBAR -->
     <!-- CONTENT -->
-    
 
-<div class="container">
-  <!-- SIDEBAR -->
-  <div class="region-sidebar">
-    <div class="panel sidebar-panel">
-      <div class="panel-heading side">
-        <span class="glyphicon glyphicon-zoom-in"></span> Regions
-      </div>
-      <div class="list-group">
-        
-        
-        <a href="/region/psi/" class="list-group-item">psi</a>
-        
-        
-        
-        <a href="/region/p17/" class="list-group-item">p17</a>
-        
-        
-        
-        <a href="/region/p24/" class="list-group-item">p24</a>
-        
-        
-        
-        <a href="/region/p2/" class="list-group-item">p2</a>
-        
-        
-        
-        <a href="/region/p7/" class="list-group-item">p7</a>
-        
-        
-        
-        <a href="/region/p1/" class="list-group-item">p1</a>
-        
-        
-        
-        <a href="/region/p6/" class="list-group-item">p6</a>
-        
-        
-        
-        <a href="/region/PR/" class="list-group-item">PR</a>
-        
-        
-        
-        <a href="/region/RT/" class="list-group-item">RT</a>
-        
-        
-        
-        <a href="/region/p15/" class="list-group-item">p15</a>
-        
-        
-        
-        <a href="/region/IN/" class="list-group-item">IN</a>
-        
-        
-        
-        <a href="/region/vif/" class="list-group-item">vif</a>
-        
-        
-        
-        <a href="/region/vpr/" class="list-group-item">vpr</a>
-        
-        
-        
-        <a href="/region/vpu/" class="list-group-item">vpu</a>
-        
-        
-        
-        <a href="/region/gp120/" class="list-group-item">gp120</a>
-        
-        
-        
-        <a href="/region/gp41/" class="list-group-item">gp41</a>
-        
-        
-        
-        <a href="/region/RRE/" class="list-group-item active">RRE</a>
-        
-        
-        
-        <a href="/region/V3/" class="list-group-item">V3</a>
-        
-        
-        
-        <a href="/region/nef/" class="list-group-item">nef</a>
-        
-        
-      </div> 
-    </div>
-  </div>
-  <!-- SIDEBAR -->
+    <div class="container">
+      <!-- SIDEBAR -->
+      <div class="region-sidebar">
+        <div class="panel sidebar-panel">
+          <div class="panel-heading side"><span class="glyphicon glyphicon-zoom-in"></span> Regions</div>
+          <div class="list-group">
+            <a href="/region/psi/" class="list-group-item">psi</a>
 
-  <!-- content -->
-  <div class="region-content">
-    <!-- header -->
-    <div class="panel header-panel">
-      <div class="panel-body">
-        <h4 class="pagetitle"><span class="glyphicon glyphicon-zoom-in"></span> Comparing patients in RRE</h4>
-      </div>
-    </div>
-    <!-- already expanded panels --> 
-    <div class="panel-group">
-      <div class="panel tab-panel">
-        <div class="panel-heading tab"> 
-          <span class="glyphicon glyphicon-info-sign"></span> <a data-toggle="collapse" href="#Sum">Location</a>
+            <a href="/region/p17/" class="list-group-item">p17</a>
+
+            <a href="/region/p24/" class="list-group-item">p24</a>
+
+            <a href="/region/p2/" class="list-group-item">p2</a>
+
+            <a href="/region/p7/" class="list-group-item">p7</a>
+
+            <a href="/region/p1/" class="list-group-item">p1</a>
+
+            <a href="/region/p6/" class="list-group-item">p6</a>
+
+            <a href="/region/PR/" class="list-group-item">PR</a>
+
+            <a href="/region/RT/" class="list-group-item">RT</a>
+
+            <a href="/region/p15/" class="list-group-item">p15</a>
+
+            <a href="/region/IN/" class="list-group-item">IN</a>
+
+            <a href="/region/vif/" class="list-group-item">vif</a>
+
+            <a href="/region/vpr/" class="list-group-item">vpr</a>
+
+            <a href="/region/vpu/" class="list-group-item">vpu</a>
+
+            <a href="/region/gp120/" class="list-group-item">gp120</a>
+
+            <a href="/region/gp41/" class="list-group-item">gp41</a>
+
+            <a href="/region/RRE/" class="list-group-item active">RRE</a>
+
+            <a href="/region/V3/" class="list-group-item">V3</a>
+
+            <a href="/region/nef/" class="list-group-item">nef</a>
+          </div>
         </div>
-        <div id="Sum" class="panel-collapse collapse in">
+      </div>
+      <!-- SIDEBAR -->
+
+      <!-- content -->
+      <div class="region-content">
+        <!-- header -->
+        <div class="panel header-panel">
           <div class="panel-body">
-            <div class="row">
-              <div class="col-xs-12">
-                <svg class="d3-plot" id="genomeSvg" style="padding-bottom:20px"></svg>
+            <h4 class="pagetitle"><span class="glyphicon glyphicon-zoom-in"></span> Comparing patients in RRE</h4>
+          </div>
+        </div>
+        <!-- already expanded panels -->
+        <div class="panel-group">
+          <div class="panel tab-panel">
+            <div class="panel-heading tab"><span class="glyphicon glyphicon-info-sign"></span> <a data-toggle="collapse" href="#Sum">Location</a></div>
+            <div id="Sum" class="panel-collapse collapse in">
+              <div class="panel-body">
+                <div class="row">
+                  <div class="col-xs-12">
+                    <svg class="d3-plot" id="genomeSvg" style="padding-bottom: 20px"></svg>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>    
-      <!-- expand nav -->
-      <!-- TREE -->
-      <div class="panel tab-panel"> 
-        <div class="panel-heading tab">
-          <span class="glyphicon glyphicon-minus"></span>
-          <a data-toggle="collapse" data-parent="#expand" href="#tree">Tree of all patients</a>
-        </div>
-        <div id="tree" class="panel-collapse collapse in" align="center">
-          <div class="panel-body">
-            <div class="col-xs-6 col-centered">
-              <span>Representation:</span>
-              <div class="btn-group btn-pad">
-                <button class="btn btn-default active" type="radio" id="switchRadial" autocomplete="off">Radial</button>
-                <button class="btn btn-default" type="radio" id="switchRectangular" autocomplete="off">Horizontal</button>
+          <!-- expand nav -->
+          <!-- TREE -->
+          <div class="panel tab-panel">
+            <div class="panel-heading tab">
+              <span class="glyphicon glyphicon-minus"></span>
+              <a data-toggle="collapse" data-parent="#expand" href="#tree">Tree of all patients</a>
+            </div>
+            <div id="tree" class="panel-collapse collapse in" align="center">
+              <div class="panel-body">
+                <div class="col-xs-6 col-centered">
+                  <span>Representation:</span>
+                  <div class="btn-group btn-pad">
+                    <button class="btn btn-default active" type="radio" id="switchRadial" autocomplete="off">Radial</button>
+                    <button class="btn btn-default" type="radio" id="switchRectangular" autocomplete="off">Horizontal</button>
+                  </div>
+                  <svg class="d3-plot" id="treeSvg"></svg>
+                  <!-- NOTE: the tag below is a trick for the tree plot -->
+                  <div id="switchColorLinkPatient" class="active"></div>
+                </div>
               </div>
-              <svg class="d3-plot" id="treeSvg"></svg>
-              <!-- NOTE: the tag below is a trick for the tree plot -->
-              <div id="switchColorLinkPatient" class="active"></div>
+            </div>
+            <div class="text-explanation"></div>
+          </div>
+          <!-- TREE -->
+          <!-- DIVERGENCE -->
+          <div class="panel tab-panel">
+            <div class="panel-heading tab">
+              <span class="glyphicon glyphicon-minus"></span>
+              <a data-toggle="collapse" data-parent="#expand" href="#divergence">Divergence</a>
+            </div>
+            <div id="divergence" class="panel-collapse collapse in" align="center">
+              <div class="panel-body">
+                <svg class="d3-plot" id="divergenceSvg"></svg>
+              </div>
+            </div>
+            <div class="text-explanation">
+              <b>Notes:</b>
+              <ul>
+                <li>The plot shows the average distance of each time point from the initial consensus sequence in RRE for each patient.</li>
+                <li>Divergence in the first time point is due to diversity.</li>
+              </ul>
             </div>
           </div>
-        </div>
-        <div class="text-explanation"></div>
-      </div>
-      <!-- TREE -->
-      <!-- DIVERGENCE -->
-      <div class="panel tab-panel"> 
-        <div class="panel-heading tab">
-          <span class="glyphicon glyphicon-minus"></span>
-          <a data-toggle="collapse" data-parent="#expand" href="#divergence">Divergence</a>
-        </div>
-        <div id="divergence" class="panel-collapse collapse in" align="center">
-          <div class="panel-body">
-            <svg class="d3-plot" id="divergenceSvg"></svg>
+          <!-- DIVERGENCE -->
+          <!-- DIVERSITY -->
+          <div class="panel tab-panel">
+            <div class="panel-heading tab">
+              <span class="glyphicon glyphicon-minus"></span>
+              <a data-toggle="collapse" data-parent="#expand" href="#diversity">Diversity</a>
+            </div>
+            <div id="diversity" class="panel-collapse collapse in" align="center">
+              <div class="panel-body">
+                <svg class="d3-plot" id="diversitySvg"></svg>
+              </div>
+            </div>
+            <div class="text-explanation">
+              <b>Notes:</b>
+              <ul>
+                <li>The plot shows the average distance between sequences from the same time point in RRE for each patient.</li>
+                <li>Diversity tends to saturate, but occasionally dips due to selective sweeps of poor template recovery resulting in low depth.</li>
+              </ul>
+            </div>
           </div>
+          <!-- DIVERSITY -->
         </div>
-        <div class="text-explanation"><b>Notes:</b>
-<ul>
-    <li>The plot shows the average distance of each time point from the initial consensus sequence in RRE for each patient.</li>
-    <li>Divergence in the first time point is due to diversity.</li>
-</ul></div>
       </div>
-      <!-- DIVERGENCE -->
-      <!-- DIVERSITY -->
-      <div class="panel tab-panel"> 
-        <div class="panel-heading tab">
-          <span class="glyphicon glyphicon-minus"></span>
-          <a data-toggle="collapse" data-parent="#expand" href="#diversity">Diversity</a>
-        </div>
-        <div id="diversity" class="panel-collapse collapse in" align="center">
-          <div class="panel-body">
-            <svg class="d3-plot" id="diversitySvg"></svg>
-          </div>
-        </div>
-        <div class="text-explanation"><b>Notes:</b>
-<ul>
-    <li>The plot shows the average distance between sequences from the same time point in RRE for each patient.</li>
-    <li>Diversity tends to saturate, but occasionally dips due to selective sweeps of poor template recovery resulting in low depth.</li>
-</ul></div>
-      </div>
-      <!-- DIVERSITY -->
+      <!-- CONTENT -->
     </div>
-  </div>
-  <!-- CONTENT -->
-</div>
 
-<!-- JS -->
-<script type="text/javascript" src="/static/js/genome.js"></script>
-<script type="text/javascript">
-function updateGenome(id, data) {
-    var svg = d3.select('#'+id),
-        divWidth = $('#'+id).parent().width();
+    <!-- JS -->
+    <script type="text/javascript" src="/static/js/genome.js"></script>
+    <script type="text/javascript">
+      function updateGenome(id, data) {
+        var svg = d3.select("#" + id),
+          divWidth = $("#" + id)
+            .parent()
+            .width();
 
-    var chart = genomeChart()
-      .svgWidth(divWidth)
-      .zoomCallbacks({'zoomin': {'pre': function(d) {
-        if (["psi", "p17", "p24", "p2", "p7", "p1", "p6", "PR", "RT", "p15", "IN", "vif", "vpr", "vpu", "gp120", "gp41", "RRE", "V3", "nef"].indexOf(d.name) != -1) {
-          var loc = window.location.href;
-          if (loc.substr(-1) == '/')
-            loc = loc.substr(0, loc.length - 1);
-          loc = loc.substr(0, loc.lastIndexOf("/")) + "/" + d.name + "/";
-          window.location.href = loc;
-        }
-        throw '';
-      }}});
+        var chart = genomeChart()
+          .svgWidth(divWidth)
+          .zoomCallbacks({
+            zoomin: {
+              pre: function (d) {
+                if (
+                  ["psi", "p17", "p24", "p2", "p7", "p1", "p6", "PR", "RT", "p15", "IN", "vif", "vpr", "vpu", "gp120", "gp41", "RRE", "V3", "nef"].indexOf(
+                    d.name,
+                  ) != -1
+                ) {
+                  var loc = window.location.href;
+                  if (loc.substr(-1) == "/") loc = loc.substr(0, loc.length - 1);
+                  loc = loc.substr(0, loc.lastIndexOf("/")) + "/" + d.name + "/";
+                  window.location.href = loc;
+                }
+                throw "";
+              },
+            },
+          });
 
-    svg.datum(data)
-       .call(chart);
-}
+        svg.datum(data).call(chart);
+      }
 
-function loadGenome(id, pname, highlight) {
-  d3.json("/api/data/referenceSequence/"+pname, function(error, genome) {
-    var data = {
-      'genome': genome,
-      'pname': pname,
-    };
-    if (highlight)
-      data.highlightedRegions = ["RRE"];
-    updateGenome(id, data);  
-  });
-}
-</script>
+      function loadGenome(id, pname, highlight) {
+        d3.json("/api/data/referenceSequence/" + pname, function (error, genome) {
+          var data = {
+            genome: genome,
+            pname: pname,
+          };
+          if (highlight) data.highlightedRegions = ["RRE"];
+          updateGenome(id, data);
+        });
+      }
+    </script>
 
-<script type="text/javascript" src="/static/js/divdivAll.js"></script>
-<script type="text/javascript">
-function loadDivs(id, pnames, region, dtype, data) {
-  data = data || [];
-  var pname = pnames[0];
-  d3.json("/api/data/divdiv/"+pname+"/"+region, function(error, divdiv) {
-    divdiv.patient = pname;
-    data.push(divdiv);
-    pnames.shift();
-    // recursive JS call
-    if (pnames.length > 0) 
-      loadDivs(id, pnames, region, dtype, data);
-    else
-      updateDivs(id, data, dtype);
-  });
-}
-</script>
-<script type="text/javascript" src="/static/js/trees.js"></script>
-<script type="text/javascript">
-function loadTree(id, pname, region) {
-  d3.json("/api/data/tree/"+pname+"/"+region, function(error, tree) {
-    var data = {};
-    data.tree = tree;      
-    data.pname = pname;
-    data.region = region;
-    data.leafLabels = false;
-    data.optimizeSpace = true;
-    data.tipMuts = false;
-    updateTree(id, data);
-   });     
-}
-</script>
-<!-- load at page opening -->
-<script>
-loadGenome("genomeSvg", "HXB2", true);
-loadDivs("divergenceSvg", ["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", "p10", "p11"], "RRE", "dg");
-loadDivs("diversitySvg", ["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", "p10", "p11"], "RRE", "ds");
-loadTree("treeSvg", "all", "RRE");
-</script>
+    <script type="text/javascript" src="/static/js/divdivAll.js"></script>
+    <script type="text/javascript">
+      function loadDivs(id, pnames, region, dtype, data) {
+        data = data || [];
+        var pname = pnames[0];
+        d3.json("/api/data/divdiv/" + pname + "/" + region, function (error, divdiv) {
+          divdiv.patient = pname;
+          data.push(divdiv);
+          pnames.shift();
+          // recursive JS call
+          if (pnames.length > 0) loadDivs(id, pnames, region, dtype, data);
+          else updateDivs(id, data, dtype);
+        });
+      }
+    </script>
+    <script type="text/javascript" src="/static/js/trees.js"></script>
+    <script type="text/javascript">
+      function loadTree(id, pname, region) {
+        d3.json("/api/data/tree/" + pname + "/" + region, function (error, tree) {
+          var data = {};
+          data.tree = tree;
+          data.pname = pname;
+          data.region = region;
+          data.leafLabels = false;
+          data.optimizeSpace = true;
+          data.tipMuts = false;
+          updateTree(id, data);
+        });
+      }
+    </script>
+    <!-- load at page opening -->
+    <script>
+      loadGenome("genomeSvg", "HXB2", true);
+      loadDivs("divergenceSvg", ["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", "p10", "p11"], "RRE", "dg");
+      loadDivs("diversitySvg", ["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", "p10", "p11"], "RRE", "ds");
+      loadTree("treeSvg", "all", "RRE");
+    </script>
 
-<!-- Manual implementation of the radio buttons in jQuery, since the bootstrap default is broken -->
-<script>
-$('#switchRectangular').on('click', function () {
-  $('#switchRadial').removeClass('active');
-  $(this).addClass('active');
-  var data = {};
-  data.leafLabels = false;
-  data.optimizeSpace = true;
-  data.tipMuts = false;
-  updateTree("treeSvg", data);
-});
-$('#switchRadial').on('click', function () {
-  $('#switchRectangular').removeClass('active');
-  $(this).addClass('active');
-  var data = {};
-  data.leafLabels = false;
-  data.optimizeSpace = true;
-  data.tipMuts = false;
-  updateTree("treeSvg", data);
-});   
-</script>
+    <!-- Manual implementation of the radio buttons in jQuery, since the bootstrap default is broken -->
+    <script>
+      $("#switchRectangular").on("click", function () {
+        $("#switchRadial").removeClass("active");
+        $(this).addClass("active");
+        var data = {};
+        data.leafLabels = false;
+        data.optimizeSpace = true;
+        data.tipMuts = false;
+        updateTree("treeSvg", data);
+      });
+      $("#switchRadial").on("click", function () {
+        $("#switchRectangular").removeClass("active");
+        $(this).addClass("active");
+        var data = {};
+        data.leafLabels = false;
+        data.optimizeSpace = true;
+        data.tipMuts = false;
+        updateTree("treeSvg", data);
+      });
+    </script>
 
     <!-- CONTENT -->
     <!-- FOOTER -->
-    
+
     <div class="nav footer navbar-fixed-bottom">
       <div class="container-fluid">
         <ul class="nav navbar-nav navbar-right">
-          <li class="text-muted"><a href="http://elifesciences.org/content/4/e11282"  target="_blank">Fabio Zanini <i>et al.</i>, eLIFE, <i>e11282</i>.</a></li>
+          <li class="text-muted">
+            <a href="http://elifesciences.org/content/4/e11282" target="_blank">Fabio Zanini <i>et al.</i>, eLIFE, <i>e11282</i>.</a>
+          </li>
         </ul>
       </div>
     </div>
-    
+
     <!-- FOOTER -->
   </body>
   <!-- BODY -->

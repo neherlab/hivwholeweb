@@ -1,14 +1,12 @@
-.patient-content
-{
+.patient-content {
   position: relative;
-  top: 0px; 
+  top: 0px;
   bottom: 0px;
   left: 130px;
   right: 0px;
   max-width: 1100px;
 }
-.patient-sidebar
-{
+.patient-sidebar {
   padding-top: 70px;
   position: fixed;
   top: 0px;
@@ -20,9 +18,9 @@
 
 /* sidebar styles */
 .sidebar-panel {
-  width: 110px; 
+  width: 110px;
   text-align: center;
-  border:1px lightgrey solid;
+  border: 1px lightgrey solid;
 }
 .panel-heading.side {
   color: dimgrey;
@@ -47,6 +45,6 @@
   border-color: lightgrey;
 }
 .list-group-item.active:hover {
-  background-color:grey;
+  background-color: grey;
   border-color: lightgrey;
 }
