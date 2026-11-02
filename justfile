@@ -17,6 +17,10 @@ deps:
 test: deps
     {{dev}} bun run test
 
+# Compare the ETI estimator with the golden master of the old ETI page (container); needs web-data/ from just data-pull
+test-eti: deps
+    {{dev}} bun run test-eti
+
 # Typecheck the server, the scripts, and the ETI estimator (container)
 typecheck: deps
     {{dev}} bun run typecheck

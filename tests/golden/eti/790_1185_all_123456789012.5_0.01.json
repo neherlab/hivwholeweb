@@ -1,0 +1,11 @@
+{
+ "input": {
+  "codon_pos": "all",
+  "diversity": "0.01",
+  "end": "1185",
+  "start": "790",
+  "xc": "123456789012.5"
+ },
+ "output": null,
+ "status": 500
+}

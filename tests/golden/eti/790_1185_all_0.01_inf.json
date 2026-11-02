@@ -1,0 +1,13 @@
+{
+ "input": {
+  "codon_pos": "all",
+  "diversity": "inf",
+  "end": "1185",
+  "start": "790",
+  "xc": "0.01"
+ },
+ "output": {
+  "message": "Values in form are inconsistent! Make sure start and end positions are between HXB2 position 500 and 9500 and diversity between 0 and 0.3. If you selected a specific codon position, your region has to be fully contained in a gene!"
+ },
+ "status": 200
+}

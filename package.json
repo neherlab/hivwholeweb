@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "test": "bun test server tests",
+    "test-eti": "bun test ./tests/test_gm_eti.ts",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {

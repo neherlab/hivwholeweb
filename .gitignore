@@ -7,5 +7,8 @@
 /.build/
 /.cache/
 
+# Derived data, which just data-pull fills from the data host
+/web-data/
+
 # Local settings (.env.example lists them)
 /.env
