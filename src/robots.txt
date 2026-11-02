@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /downloads
+Disallow: /data
+Disallow: /download/
+Disallow: /static/data/
+Disallow: /api/
+Disallow: /static/eti/

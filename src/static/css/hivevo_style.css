@@ -1,0 +1,261 @@
+/* general styles */
+.container {
+  padding-top: 20px;
+  max-width: 1500px
+}
+.text-explanation{
+  /*font: 12px sans-serif;*/
+  max-width: 600px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  margin-left: 15%;
+  margin-right: 15%;
+  text-align: justify;
+  line-height: 1.5;
+}
+.text-intro{
+  /*font: 12px sans-serif;*/
+  max-width: 600px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  margin-left: 3%;
+  margin-right: 5%;
+  text-align: justify;
+  line-height: 1.5;
+}
+
+.col-centered{
+    float: none;
+    margin: 0 auto;
+}
+
+.alert {
+  max-width: 1500px;
+  margin-right: 10%;
+  margin-left: 10%;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  padding-top: 20px;
+  padding-left: 20px;
+  padding-bottom: 20px;
+}
+a:link {
+  color: indianred;
+}
+a:hover {
+  color: dimgrey;
+}
+a:visited {
+  color: indianred;
+}
+a:visited:hover {
+  color: dimgrey;
+}
+.pagetitle {
+  color: dimgrey;
+  text-align: center;
+}
+.header-panel {
+  background-color: white;
+  border: 1px lightgrey solid;
+  max-width: 1100px;
+}
+.text-primary {
+  color: dimgrey;
+}
+body {
+  background-color: #fcfcfc;
+  font-family: "Raleway";
+  font-size: 150%;
+}
+
+/* table style */
+.numbers {
+  text-align: right;
+}
+.tablelinks:hover{
+  background-color: whitesmoke;
+  cursor: pointer;
+}
+.colhead > th {
+  text-align: right;
+}
+.centerhead > th {
+  text-align: center;
+}
+.leftcol {
+  border-right: 1px lightgrey solid;
+}
+
+/* tab styles */
+.tab-panel {
+  border: 1px lightgrey solid;
+  margin-top: 5px;
+  max-width: 1100px;
+}
+.bottom-border {
+  border-bottom: 1px lightgrey solid;
+}
+.panel-heading.tab {
+  color: dimgrey;
+  background-color: whitesmoke;
+  max-width: 1100px;
+}
+.panel-heading > a {
+  color: dimgrey;
+  max-width: 1100px;
+}
+.panel-heading > span {
+  color: dimgrey;
+  max-width: 1100px;
+}
+
+/* welcome page styles */
+.jumbotron {
+  background-color: white;
+  border: 1px lightgrey solid;
+  padding: 20px;
+}
+
+.subheader {
+  margin-left: 17px;
+  color: dimgrey;
+  font-weight: bold;
+}
+.caption {
+  text-align: center;
+  color: dimgrey;
+  font-size: 105%;
+}
+
+/* people page styles */
+.row.logos {
+  text-align: center;
+  max-width: 1100px;
+  padding: 20px;
+}
+.people-panel {
+  border: 1px lightgrey solid;
+  max-width: 1100px;
+}
+
+/*publication page styles */
+p.list {
+  font-size: 47px;
+  color: lightgrey;
+  font-weight: bold;
+  font-style: italic;
+}
+.content {
+  max-width: 1100px;
+}
+
+/* axis styles */
+.axis {
+  font: 12px sans-serif;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+
+/*plot styles*/
+.axis .domain {
+  fill: none;
+  stroke: #000;
+  stroke-opacity: .3;
+  stroke-width: 10px;
+  stroke-linecap: round;
+}
+
+.axis .halo {
+  fill: none;
+  stroke: #ddd;
+  stroke-width: 8px;
+  stroke-linecap: round;
+}
+
+.slider .handle {
+  fill: #fff;
+  stroke: #000;
+  stroke-opacity: .5;
+  stroke-width: 1.25px;
+}
+
+
+/* tree styles */
+
+.treetip {
+  fill: "white";
+  fill-opacity: 0.0;
+  stroke-width: 0;
+}
+
+.leaf {
+  fill-opacity: 0.8;
+  stroke-width: 2;
+}
+
+
+.highlight {
+  stroke: steelblue;
+  fill: none;
+  stroke-width: 4;
+}
+
+.link {
+  fill: none;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.annoline {
+  fill: none;
+  stroke: lightgrey;
+  stroke-dasharray: 3, 3;
+  stroke-width: 2;
+}
+
+.annotext {
+  stroke-width: 0;
+}
+
+.lengthbar {
+  stroke: black;
+  stroke: solid;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.lengthbartext {
+  stroke-width: 0;
+}
+
+
+/*spacers*/
+
+.hugespacer {
+  height: 50px;
+}
+
+.bigspacer {
+  height: 30px;
+}
+
+.spacer {
+  height: 10px;
+}
+
+.smallspacer {
+  height: 5px;
+}
+
+/* genome styles */
+.featurerect {
+  fill-opacity: 0.5;
+  stroke-width: 1;
+  stroke:black;
+  text-anchor:middle; 
+}
+

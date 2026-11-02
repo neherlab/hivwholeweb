@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+  <!-- HEAD -->
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+      <title>Genome sequences - Intrapatient HIV evolution</title>
+    
+
+    <!-- include head -->
+    
+
+<link href="../static/css/method.css" rel="stylesheet">
+
+
+  </head>
+  <!-- HEAD -->
+  <!-- BODY -->
+  <body >
+    <!-- TOP NAVBAR -->
+    <!-- include nav -->
+    <!-- TOP NAVBAR -->
+    <!-- CONTENT -->
+    
+<div class="container">
+
+  <!-- sidebar -->
+  <div class="method-sidebar">
+    <div class="panel sidebar-panel">
+      <div class="panel-heading side">
+        <span class="glyphicon glyphicon-book"></span> Analyses
+      </div>
+      <div class="list-group">
+        
+        
+        
+        <a href="/method/physiological/" class="list-group-item">
+          <img width="20" src="/static/images/icons/viral_load.svg" alt="Viral load and CD4+ counts"> Viral load and CD4+ counts
+        </a>
+        
+        
+        
+        
+        
+        <a href="/method/genomes/" class="list-group-item active">
+          <img width="20" src="/static/images/icons/genome_white.svg" alt="Genome sequences"> Genome sequences
+        </a>
+        
+        
+        
+        
+        
+        <a href="/method/consensi/" class="list-group-item">
+          <img width="20" src="/static/images/icons/consensi.svg" alt="Consensus sequences"> Consensus sequences
+        </a>
+        
+        
+        
+        
+        
+        <a href="/method/trees/" class="list-group-item">
+          <img width="20" src="/static/images/icons/tree.svg" alt="Phylogenetic trees"> Phylogenetic trees
+        </a>
+        
+        
+        
+        
+        
+        <a href="/method/divdiv/" class="list-group-item">
+          <img width="20" src="/static/images/icons/diversity.svg" alt="Divergence and diversity"> Divergence and diversity
+        </a>
+        
+        
+        
+        
+        
+        <a href="/method/divdivLocal/" class="list-group-item">
+          <img width="20" src="/static/images/icons/divdiv_local.svg" alt="Local divergence and diversity"> Local divergence and diversity
+        </a>
+        
+        
+        
+        
+        
+        <a href="/method/coverage/" class="list-group-item">
+          <img width="20" src="/static/images/icons/coverage.svg" alt="Coverage"> Coverage
+        </a>
+        
+        
+        
+        
+        
+        <a href="/method/singleNucleotidePolymorphisms/" class="list-group-item">
+          <img width="20" src="/static/images/icons/allele_frequencies.svg" alt="Single nucleotide polymorphisms"> Single nucleotide polymorphisms
+        </a>
+        
+        
+        
+        
+        
+        <a href="/method/haplotypes/" class="list-group-item">
+          <img width="20" src="/static/images/icons/haplotype_frequencies.svg" alt="Haplotypes"> Haplotypes
+        </a>
+        
+        
+        
+      </div> 
+    </div>
+  </div>
+  <div class="clearfix visible-xs-block"></div>
+
+  <!-- content -->
+  <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9 method-content">
+    <div class="panel header-panel">
+      <div class="panel-body">
+      <h4 class="pagetitle">Genome sequences</h4>
+      </div>
+    </div>    
+    <div class="panel panel-default">
+      <div class="panel-body">
+        
+<p class="text-explanation">
+The HIV genome is annotated with genes, proteins, and RNA structures. The PCR fragments used for RNA amplification are also shown.
+</p>
+<hr>
+<h5 id="plotTitle"></h5>
+<hr>
+<!-- PLOT -->
+<div>
+  <svg class="d3-plot" id="genomeSvg"></svg>
+</div> 
+<!-- PLOT -->
+<br>
+<div class="text-explanation">
+  <b>Note</b>: Genome coordinates are inclusive at both ends and start from 1.
+</div>
+
+<!-- DOWNLOAD -->
+<div class="btn-pad">
+  <a role="button" class="btn btn-default" id="downloadGenome">Download annotated sequence</a>
+</div>
+<!-- DOWNLOAD -->
+
+<!-- FORM -->
+<div class="form-group form-inline" align="center">
+  <label>Patient:</label>
+  <select class="form-control formPatient">
+    
+      <option>p1</option>
+    
+      <option>p2</option>
+    
+      <option>p3</option>
+    
+      <option>p4</option>
+    
+      <option>p5</option>
+    
+      <option>p6</option>
+    
+      <option>p7</option>
+    
+      <option>p8</option>
+    
+      <option>p9</option>
+    
+      <option>p10</option>
+    
+      <option>p11</option>
+     
+  </select>
+</div>
+<!-- FORM -->
+
+<script type="text/javascript" src="/static/js/genome.js"></script>
+<script type="text/javascript">
+function loadGenome(id, pname) {
+  d3.json("/api/data/referenceSequence/"+pname, function(error, genome) {
+    var data = {
+      'genome': genome,
+      'pname': pname,
+    };
+    // DOM manipulations
+    $('#plotTitle').html("\<b\>Patient "+pname+"\</b\>");
+    $('a#downloadGenome').attr("href", "/static/data/sequences/reference_"+pname+"_genomewide.gb");
+    updateGenome(id, data);  
+  });
+}
+
+loadGenome("genomeSvg", $('.formPatient option:selected').val());
+</script>
+
+<!-- jquery event handling for selections -->
+<script>
+$('select.formPatient').on('change', function(){
+  var patient = $('.formPatient option:selected').val();
+  emptyGenome("genomeSvg");
+  loadGenome("genomeSvg", patient);
+});
+</script>
+
+
+      </div>  
+    </div>
+
+  </div>
+  <!-- end main content -->
+</div> 
+
+
+
+    <!-- CONTENT -->
+    <!-- FOOTER -->
+    
+    <div class="nav footer navbar-fixed-bottom">
+      <div class="container-fluid">
+        <ul class="nav navbar-nav navbar-right">
+          <li class="text-muted"><a href="http://elifesciences.org/content/4/e11282"  target="_blank">Fabio Zanini <i>et al.</i>, eLIFE, <i>e11282</i>.</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <!-- FOOTER -->
+  </body>
+  <!-- BODY -->
+</html>

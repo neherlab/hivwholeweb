@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+  <!-- HEAD -->
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+      <title>Consensus sequences - Intrapatient HIV evolution</title>
+    
+
+    <!-- include head -->
+    
+
+<link href="../static/css/method.css" rel="stylesheet">
+
+
+  </head>
+  <!-- HEAD -->
+  <!-- BODY -->
+  <body >
+    <!-- TOP NAVBAR -->
+    <!-- include nav -->
+    <!-- TOP NAVBAR -->
+    <!-- CONTENT -->
+    
+<div class="container">
+
+  <!-- sidebar -->
+  <div class="method-sidebar">
+    <div class="panel sidebar-panel">
+      <div class="panel-heading side">
+        <span class="glyphicon glyphicon-book"></span> Analyses
+      </div>
+      <div class="list-group">
+        
+        
+        
+        <a href="/method/physiological/" class="list-group-item">
+          <img width="20" src="/static/images/icons/viral_load.svg" alt="Viral load and CD4+ counts"> Viral load and CD4+ counts
+        </a>
+        
+        
+        
+        
+        
+        <a href="/method/genomes/" class="list-group-item">
+          <img width="20" src="/static/images/icons/genome.svg" alt="Genome sequences"> Genome sequences
+        </a>
+        
+        
+        
+        
+        
+        <a href="/method/consensi/" class="list-group-item active">
+          <img width="20" src="/static/images/icons/consensi_white.svg" alt="Consensus sequences"> Consensus sequences
+        </a>
+        
+        
+        
+        
+        
+        <a href="/method/trees/" class="list-group-item">
+          <img width="20" src="/static/images/icons/tree.svg" alt="Phylogenetic trees"> Phylogenetic trees
+        </a>
+        
+        
+        
+        
+        
+        <a href="/method/divdiv/" class="list-group-item">
+          <img width="20" src="/static/images/icons/diversity.svg" alt="Divergence and diversity"> Divergence and diversity
+        </a>
+        
+        
+        
+        
+        
+        <a href="/method/divdivLocal/" class="list-group-item">
+          <img width="20" src="/static/images/icons/divdiv_local.svg" alt="Local divergence and diversity"> Local divergence and diversity
+        </a>
+        
+        
+        
+        
+        
+        <a href="/method/coverage/" class="list-group-item">
+          <img width="20" src="/static/images/icons/coverage.svg" alt="Coverage"> Coverage
+        </a>
+        
+        
+        
+        
+        
+        <a href="/method/singleNucleotidePolymorphisms/" class="list-group-item">
+          <img width="20" src="/static/images/icons/allele_frequencies.svg" alt="Single nucleotide polymorphisms"> Single nucleotide polymorphisms
+        </a>
+        
+        
+        
+        
+        
+        <a href="/method/haplotypes/" class="list-group-item">
+          <img width="20" src="/static/images/icons/haplotype_frequencies.svg" alt="Haplotypes"> Haplotypes
+        </a>
+        
+        
+        
+      </div> 
+    </div>
+  </div>
+  <div class="clearfix visible-xs-block"></div>
+
+  <!-- content -->
+  <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9 method-content">
+    <div class="panel header-panel">
+      <div class="panel-body">
+      <h4 class="pagetitle">Consensus sequences</h4>
+      </div>
+    </div>    
+    <div class="panel panel-default">
+      <div class="panel-body">
+        
+ 
+ 
+ <p class="text-explanation">
+   Consensus sequences track the evolution of HIV in terms of major variants.
+  </p>
+  <hr>
+ 
+ <form role="form" data-download="/static/data/alignments/consensi_alignment_{patient}_{region}.fasta" name="consensi_settings" class="form-horizontal">
+  <div class="form-group">
+   <label for="patient">Patient</label> <select id="patient" name="patient"><option value="p1">p1</option><option value="p2">p2</option><option value="p3">p3</option><option value="p4">p4</option><option value="p5">p5</option><option value="p6">p6</option><option value="p7">p7</option><option value="p8">p8</option><option value="p9">p9</option><option value="p10">p10</option><option value="p11">p11</option></select>
+  </div>
+  <div class="form-group">
+   <label for="region">Region</label> <select id="region" name="region"><option value="genomewide">genomewide</option><option value="V3">V3</option><option value="PR">PR</option><option value="psi">psi</option><option value="vpr">vpr</option><option value="vpu">vpu</option><option value="p15">p15</option><option value="p17">p17</option><option value="p6">p6</option><option value="p2">p2</option><option value="p1">p1</option><option value="p7">p7</option><option value="RRE">RRE</option><option value="F1">F1</option><option value="F2">F2</option><option value="F3">F3</option><option value="F4">F4</option><option value="F5">F5</option><option value="F6">F6</option></select>
+  </div>
+  <button type="submit" class="btn btn-default">Download sequences</button>
+ </form>
+
+      </div>  
+    </div>
+
+  </div>
+  <!-- end main content -->
+</div> 
+
+
+
+    <!-- CONTENT -->
+    <!-- FOOTER -->
+    
+    <div class="nav footer navbar-fixed-bottom">
+      <div class="container-fluid">
+        <ul class="nav navbar-nav navbar-right">
+          <li class="text-muted"><a href="http://elifesciences.org/content/4/e11282"  target="_blank">Fabio Zanini <i>et al.</i>, eLIFE, <i>e11282</i>.</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <!-- FOOTER -->
+  <script type="text/javascript" src="/static/js/download_forms.js"></script>
+  </body>
+  <!-- BODY -->
+</html>
