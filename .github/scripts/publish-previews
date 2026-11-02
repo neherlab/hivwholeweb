@@ -1,0 +1,112 @@
+#!/usr/bin/env bash
+#
+# Usage: $0
+#
+# Upload the build in dist/ to the preview sites of a run of
+# .github/workflows/web.yml, list their URLs in the step summary, and write the
+# URL of each pull request's site into a comment on that pull request.
+#
+# Sites: neherlab--hivwholeweb--commit-<sha>, --branch-<branch>, and --pr-<number>
+# for each open pull request of the branch from this repository. The workflow
+# runs this script for every ref except master, whose pushes deploy the
+# production site instead. The comment starts with a marker, so a later run
+# updates the same comment instead of adding one.
+#
+# Environment:
+#   COMMIT                     Commit of the build
+#   BRANCH                     Branch of the build
+#   PR_NUMBER                  Pull request of a pull_request event, empty for other events
+#   GH_TOKEN                   Token for gh, which may write pull request comments
+#   PREVIEWS_NEHERLAB_CLICK_*  Settings of `just publish-preview` (.env.example)
+#   GITHUB_*                   Default variables of GitHub Actions
+#
+set -euo pipefail
+trap "exit" INT
+
+THIS_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
+
+readonly SITE_PREFIX="neherlab--hivwholeweb--"
+readonly COMMENT_MARKER="<!-- web-preview -->"
+
+publish() {
+  : "${COMMIT:?}" "${BRANCH:?}" "${GITHUB_REPOSITORY:?}" "${GITHUB_STEP_SUMMARY:?}"
+
+  local prs_text
+  prs_text="$(pull_requests)"
+  local prs=()
+  if [[ -n "${prs_text}" ]]; then
+    mapfile -t prs <<<"${prs_text}"
+  fi
+
+  local sites=("${SITE_PREFIX}commit-${COMMIT:0:7}" "${SITE_PREFIX}branch-${BRANCH}")
+  local pr
+  for pr in "${prs[@]}"; do
+    sites+=("${SITE_PREFIX}pr-${pr}")
+  done
+
+  local urls_text
+  pushd "${THIS_DIR}/../.." >/dev/null
+  urls_text="$(dev/dev just publish-preview "${sites[@]}")"
+  popd >/dev/null
+  local urls
+  mapfile -t urls <<<"${urls_text}"
+  {
+    printf "## Web app previews\n\n"
+    printf -- "- %s\n" "${urls[@]}"
+  } >>"${GITHUB_STEP_SUMMARY}"
+
+  # The URLs follow the order of the sites: commit, branch, then the pull requests.
+  local index=2
+  for pr in "${prs[@]}"; do
+    comment "${pr}" "${urls[index]}" "${urls[0]}"
+    index=$((index + 1))
+  done
+}
+
+# Print the open pull requests of the build, one number per line: the pull
+# request of a pull_request event, or those of the branch from this repository.
+pull_requests() {
+  if [[ -n "${PR_NUMBER:-}" ]]; then
+    printf "%s\n" "${PR_NUMBER}"
+    return
+  fi
+  gh pr list --repo "${GITHUB_REPOSITORY}" --head "${BRANCH}" --state open \
+    --json number,headRepositoryOwner \
+    --jq ".[] | select(.headRepositoryOwner.login == \"${GITHUB_REPOSITORY_OWNER}\") | .number"
+}
+
+# Write the preview comment of a pull request: update the comment that starts
+# with the marker, or add one.
+comment() {
+  local pr="${1}" pr_url="${2}" commit_url="${3}"
+  local body
+  body="$(printf '%s\nWeb app preview: %s\n\nCommit %s: %s ([build](%s/%s/actions/runs/%s))\n' \
+    "${COMMENT_MARKER}" "${pr_url}" "${COMMIT:0:7}" "${commit_url}" \
+    "${GITHUB_SERVER_URL}" "${GITHUB_REPOSITORY}" "${GITHUB_RUN_ID}")"
+  local comment_ids
+  comment_ids="$(gh api "repos/${GITHUB_REPOSITORY}/issues/${pr}/comments" --paginate \
+    --jq ".[] | select(.body | startswith(\"${COMMENT_MARKER}\")) | .id")"
+  local comment_id="${comment_ids%%$'\n'*}"
+  if [[ -n "${comment_id}" ]]; then
+    gh api --method PATCH "repos/${GITHUB_REPOSITORY}/issues/comments/${comment_id}" -f body="${body}" >/dev/null
+  else
+    gh api --method POST "repos/${GITHUB_REPOSITORY}/issues/${pr}/comments" -f body="${body}" >/dev/null
+  fi
+}
+
+main() {
+  show_help() {
+    sed -n '2,${/^#/!q; s/^# \?//p}' "${BASH_SOURCE[0]}" | sed "s|\$0|${0##*/}|g"
+  }
+
+  [[ "${1:-}" =~ ^(-h|--help)$ ]] && {
+    show_help
+    exit 0
+  }
+
+  publish
+}
+
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+  main "$@"
+fi

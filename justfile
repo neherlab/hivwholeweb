@@ -58,6 +58,11 @@ test-eti: deps
 typecheck: deps
     {{dev}} bun run typecheck
 
+# Lint the GitHub workflows and their scripts (container)
+lint:
+    {{dev}} actionlint
+    {{dev}} shellcheck .github/scripts/publish-previews
+
 # Write dist/, the page host files, from src/ (container); see scripts/build.ts
 build-dist *args:
     {{dev}} bun scripts/build-dist.ts {{args}}

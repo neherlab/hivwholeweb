@@ -1,0 +1,129 @@
+name: "Web app"
+
+# Builds the site on every push and uploads it. CI runs no tests and downloads
+# no data: the tests run locally (docs/development.md).
+#
+# - Pushes to master build the production site (just build-dist, with the
+#   analytics domain) and upload it to https://hiv.neherlab.org with
+#   just publish-site, which also syncs the page key store and clears the cache
+#   of the page host. The job assumes the AWS role of the repository variable
+#   HIVWHOLEWEB_SITE_AWS_ROLE_ARN through GitHub OIDC; it uses no stored keys.
+# - Every other ref builds a preview (just build-dist --preview) and uploads it
+#   with .github/scripts/publish-previews to one preview site per commit, per
+#   branch, and per open pull request of the branch, at
+#   <site>.previews.neherlab.click. A push run publishes the sites of the open
+#   pull requests of its branch, so a pull request triggers a run of its own
+#   only when it is opened or reopened. Pull requests from forks build without
+#   an upload, because they get no secrets.
+#
+# The pages read their data from the data host of the repository variable
+# HIVWHOLEWEB_DATA_URL; the data is not part of these uploads.
+
+on:
+  push:
+    branches:
+      - "**"
+  pull_request:
+    types:
+      - "opened"
+      - "reopened"
+  workflow_dispatch:
+
+permissions:
+  contents: "read"
+
+concurrency:
+  group: "web-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}"
+  # A cancelled production deploy would leave the page host between two versions.
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
+
+defaults:
+  run:
+    shell: "bash -euo pipefail {0}"
+
+env:
+  FORCE_COLOR: "1"
+
+jobs:
+  preview:
+    name: "Build and upload previews"
+    if: github.ref != 'refs/heads/master'
+    runs-on: "ubuntu-24.04"
+    timeout-minutes: 30
+    permissions:
+      contents: "read"
+      pull-requests: "write"
+
+    steps:
+      - name: "Check out"
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: "${{ github.event.pull_request.head.sha || github.sha }}"
+
+      - name: "Build the preview"
+        env:
+          HIVWHOLEWEB_DATA_URL: "${{ vars.HIVWHOLEWEB_DATA_URL }}"
+        run: dev/dev just build-dist --preview
+
+      - name: "Upload the preview"
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          PREVIEWS_NEHERLAB_CLICK_DOMAIN: "${{ vars.PREVIEWS_NEHERLAB_CLICK_DOMAIN }}"
+          PREVIEWS_NEHERLAB_CLICK_AWS_ACCESS_KEY_ID: "${{ secrets.PREVIEWS_NEHERLAB_CLICK_AWS_ACCESS_KEY_ID }}"
+          PREVIEWS_NEHERLAB_CLICK_AWS_SECRET_ACCESS_KEY: "${{ secrets.PREVIEWS_NEHERLAB_CLICK_AWS_SECRET_ACCESS_KEY }}"
+          PREVIEWS_NEHERLAB_CLICK_AWS_DEFAULT_REGION: "${{ secrets.PREVIEWS_NEHERLAB_CLICK_AWS_DEFAULT_REGION }}"
+          PREVIEWS_NEHERLAB_CLICK_AWS_S3_BUCKET: "${{ secrets.PREVIEWS_NEHERLAB_CLICK_AWS_S3_BUCKET }}"
+          PREVIEWS_NEHERLAB_CLICK_AWS_CLOUDFRONT_DISTRIBUTION_ID: "${{ secrets.PREVIEWS_NEHERLAB_CLICK_AWS_CLOUDFRONT_DISTRIBUTION_ID }}"
+          GH_TOKEN: "${{ github.token }}"
+          COMMIT: "${{ github.event.pull_request.head.sha || github.sha }}"
+          BRANCH: "${{ github.head_ref || github.ref_name }}"
+          PR_NUMBER: "${{ github.event.pull_request.number }}"
+        run: .github/scripts/publish-previews
+
+  production:
+    name: "Build and deploy the production site"
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    runs-on: "ubuntu-24.04"
+    timeout-minutes: 30
+    permissions:
+      contents: "read"
+      id-token: "write"
+    env:
+      HIVWHOLEWEB_DATA_URL: "${{ vars.HIVWHOLEWEB_DATA_URL }}"
+      HIVWHOLEWEB_PLAUSIBLE_DOMAIN: "${{ vars.HIVWHOLEWEB_PLAUSIBLE_DOMAIN }}"
+      HIVWHOLEWEB_SITE_AWS_ROLE_ARN: "${{ vars.HIVWHOLEWEB_SITE_AWS_ROLE_ARN }}"
+      HIVWHOLEWEB_SITE_AWS_S3_BUCKET: "${{ vars.HIVWHOLEWEB_SITE_AWS_S3_BUCKET }}"
+      HIVWHOLEWEB_SITE_AWS_CLOUDFRONT_DISTRIBUTION_ID: "${{ vars.HIVWHOLEWEB_SITE_AWS_CLOUDFRONT_DISTRIBUTION_ID }}"
+      HIVWHOLEWEB_SITE_AWS_KVS_ARN: "${{ vars.HIVWHOLEWEB_SITE_AWS_KVS_ARN }}"
+      HIVWHOLEWEB_SITE_AWS_DEFAULT_REGION: "${{ vars.HIVWHOLEWEB_SITE_AWS_DEFAULT_REGION }}"
+
+    steps:
+      - name: "Check the settings"
+        run: |
+          missing=()
+          for name in HIVWHOLEWEB_DATA_URL HIVWHOLEWEB_PLAUSIBLE_DOMAIN HIVWHOLEWEB_SITE_AWS_ROLE_ARN \
+            HIVWHOLEWEB_SITE_AWS_S3_BUCKET HIVWHOLEWEB_SITE_AWS_CLOUDFRONT_DISTRIBUTION_ID \
+            HIVWHOLEWEB_SITE_AWS_KVS_ARN HIVWHOLEWEB_SITE_AWS_DEFAULT_REGION; do
+            if [[ -z "${!name}" ]]; then
+              missing+=("${name}")
+            fi
+          done
+          if ((${#missing[@]} > 0)); then
+            printf "::error::Set the repository variables %s\n" "${missing[*]}"
+            exit 1
+          fi
+
+      - name: "Check out"
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: "Build"
+        run: dev/dev just build-dist
+
+      - name: "Get AWS credentials"
+        uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
+        with:
+          role-to-assume: "${{ vars.HIVWHOLEWEB_SITE_AWS_ROLE_ARN }}"
+          aws-region: "${{ vars.HIVWHOLEWEB_SITE_AWS_DEFAULT_REGION }}"
+
+      - name: "Deploy"
+        run: dev/dev just publish-site
