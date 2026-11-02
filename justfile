@@ -50,7 +50,7 @@ deps:
 typecheck: deps
     {{dev}} bun run typecheck
 
-# Format the code of scripts/, server/, and the ETI estimator with oxfmt (container)
+# Format the code of scripts/ and server/ and the pages, stylesheets, and scripts of src/ with oxfmt (container)
 format: deps
     {{dev}} bun run format
 

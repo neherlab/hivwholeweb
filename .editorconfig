@@ -1,5 +1,5 @@
-# Editor settings of the repository. oxfmt formats the TypeScript and
-# JavaScript (just format); the vendored packages keep their own style.
+# Editor settings of the repository. oxfmt formats the TypeScript, HTML, CSS,
+# and JavaScript (just format); the vendored packages keep their own style.
 root = true
 
 [*]

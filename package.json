@@ -3,8 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "format": "oxfmt 'scripts/**/*.ts' 'server/**/*.ts' 'src/static/eti/*.js'",
-    "format-check": "oxfmt --check 'scripts/**/*.ts' 'server/**/*.ts' 'src/static/eti/*.js'",
+    "format": "oxfmt 'scripts/**/*.ts' 'server/**/*.ts' 'src/**/*.{html,css,js}' '!src/static/components/**'",
+    "format-check": "oxfmt --check 'scripts/**/*.ts' 'server/**/*.ts' 'src/**/*.{html,css,js}' '!src/static/components/**'",
     "lint": "oxlint --deny-warnings scripts server src/static/eti",
     "serve": "bun server/serve.ts",
     "typecheck": "tsc --noEmit"
