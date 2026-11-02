@@ -6,6 +6,9 @@ set dotenv-load
 
 dev := if env("DEV_CONTAINER", "") == "1" { "" } else { "dev/dev" }
 
+# Origin of the data host: the build points the data URLs of the pages to it.
+export HIVWHOLEWEB_DATA_URL := if env("HIVWHOLEWEB_DATA_URL", "") == "" { "https://data.hiv.neherlab.org" } else { env("HIVWHOLEWEB_DATA_URL") }
+
 default:
     @just --list
 
@@ -24,3 +27,7 @@ test-eti: deps
 # Typecheck the server, the scripts, and the ETI estimator (container)
 typecheck: deps
     {{dev}} bun run typecheck
+
+# Write dist/, the page host files, from src/ (container); see scripts/build.ts
+build-dist *args:
+    {{dev}} bun scripts/build-dist.ts {{args}}
