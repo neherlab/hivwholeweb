@@ -2,7 +2,7 @@
 # check=experimental=all
 #
 # Project container of the static site: the tools of mise.toml (Bun, Node, just,
-# jq, the AWS CLI, actionlint, shellcheck) at the versions of mise.lock. dev/dev
+# jq, actionlint, shellcheck) at the versions of mise.lock. dev/dev
 # builds it and runs every command as the host user.
 FROM debian:bookworm-slim@sha256:99c0b25c46d0214d5a2091092e7908907dcaecd6a962cde0ac700acee222b6f3
 SHELL ["bash", "-euxo", "pipefail", "-c"]

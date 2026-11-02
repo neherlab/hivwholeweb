@@ -9,7 +9,6 @@ minimum_release_age = "7d"
 
 [tools]
 actionlint = "1.7.12"
-aws-cli = "2.38.4"
 bun = "1.4.4"
 jq = "1.8.2"
 just = "1.58.0"

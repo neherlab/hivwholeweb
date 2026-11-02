@@ -13,14 +13,6 @@ url = "https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_
 url_api = "https://api.github.com/repos/rhysd/actionlint/releases/assets/384924896"
 provenance = "github-attestations"
 
-[[tools.aws-cli]]
-version = "2.38.4"
-backend = "aqua:aws/aws-cli"
-specifiers = ["2.38.4"]
-
-[tools.aws-cli."platforms.linux-x64"]
-url = "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.38.4.zip"
-
 [[tools.bun]]
 version = "1.4.4"
 backend = "core:bun"
