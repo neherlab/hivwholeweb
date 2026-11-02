@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "serve": "bun server/serve.ts",
     "test": "bun test server tests",
     "test-eti": "bun test ./tests/test_gm_eti.ts",
     "typecheck": "tsc --noEmit"
