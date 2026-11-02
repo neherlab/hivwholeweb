@@ -50,8 +50,14 @@ deps:
 typecheck: deps
     {{dev}} bun run typecheck
 
-# Lint the GitHub workflows and their scripts (container)
-lint:
+# Format the code of scripts/, server/, and the ETI estimator with oxfmt (container)
+format: deps
+    {{dev}} bun run format
+
+# Lint that code with oxlint and check its format, then lint the GitHub workflows and their scripts (container)
+lint: deps
+    {{dev}} bun run lint
+    {{dev}} bun run format-check
     {{dev}} actionlint
     {{dev}} shellcheck .github/scripts/publish-previews
 

@@ -25,7 +25,8 @@ The website is a static site: pages, scripts, and data files, with no server cod
 
 - `just serve`: build `dist/` and serve it at http://127.0.0.1:8080/ (`PORT` changes the port); it builds again when a file under `src/` changes
 - `just serve-data`: serve `web-data/` and the pulled download files as the data host at http://127.0.0.1:8081/ (`DATA_PORT` changes the port)
-- `just typecheck`, `just lint`: the typecheck, and the lint of the workflow and its script
+- `just format`: format the TypeScript and JavaScript of `scripts/`, `server/`, and the ETI estimator with oxfmt (`.oxfmtrc.json`)
+- `just typecheck`, `just lint`: the typecheck, and the lint: oxlint and a format check of that code, then actionlint and shellcheck of the workflow and its script
 - `just build-dist [--preview]`: write `dist/` ([Build](#build))
 - `just data-pull [--files]`: fill `web-data/`, and with `--files` also `.cache/data-files/` with the download files, from the archives of the data host
 - `just publish-site`, `just publish-preview <site>...`: upload `dist/` to the production page host or to preview sites ([Page host](hosting.md#page-host))

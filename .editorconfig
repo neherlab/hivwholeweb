@@ -1,0 +1,25 @@
+# Editor settings of the repository. oxfmt formats the TypeScript and
+# JavaScript (just format); the vendored packages keep their own style.
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.md]
+trim_trailing_whitespace = false
+
+[justfile]
+indent_size = 4
+
+[src/static/components/**]
+charset = unset
+end_of_line = unset
+indent_style = unset
+indent_size = unset
+insert_final_newline = unset
+trim_trailing_whitespace = unset

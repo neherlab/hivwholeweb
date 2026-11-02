@@ -3,6 +3,9 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "format": "oxfmt 'scripts/**/*.ts' 'server/**/*.ts' 'src/static/eti/*.js'",
+    "format-check": "oxfmt --check 'scripts/**/*.ts' 'server/**/*.ts' 'src/static/eti/*.js'",
+    "lint": "oxlint --deny-warnings scripts server src/static/eti",
     "serve": "bun server/serve.ts",
     "typecheck": "tsc --noEmit"
   },
@@ -10,6 +13,8 @@
     "@types/bun": "1.4.3",
     "@types/yauzl": "3.4.0",
     "@types/yazl": "3.3.1",
+    "oxfmt": "0.74.0",
+    "oxlint": "1.89.0",
     "typescript": "7.0.2"
   },
   "dependencies": {
