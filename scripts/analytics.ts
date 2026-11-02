@@ -2,7 +2,8 @@
 // the domain of the build setting HIVWHOLEWEB_PLAUSIBLE_DOMAIN, or the build
 // removes the tag when the setting is empty.
 
-const PLAUSIBLE_TAG = /<script id="plausible"[^>]*><\/script>/gu;
+// The tag in any layout: its attributes may stand in any order and on separate lines.
+const PLAUSIBLE_TAG = /<script\s[^>]*\bid="plausible"[^>]*><\/script>/gu;
 
 const DATA_DOMAIN = /\sdata-domain="[^"]*"/u;
 
