@@ -67,7 +67,7 @@ import { Crc64Nvme } from "@aws-sdk/crc64-nvme";
 
 import { cloudFrontClient, copySource, invalidateAll, isNotFound, keyStoreClient, requireEnv, s3Client } from "./aws.ts";
 import { mapLimited } from "./concurrency.ts";
-import { deleteStoreKeys, planStoreSync, putStoreKeys, readStoreKeys, storeDifferences } from "./key-store.ts";
+import { deleteStoreKeys, planStoreSync, putStoreKeys, readStoreKeys, storeDifferences, waitForPropagation } from "./key-store.ts";
 import {
   INDEX_CACHE,
   INDEX_KEY,
@@ -159,6 +159,7 @@ const plan = planStoreSync(await readStoreKeys(keyStore, store), dataStoreKeys(m
 
 console.error(`adding ${plan.puts.length} keys to the data store`);
 await putStoreKeys(keyStore, store, plan.puts);
+await waitForPropagation(plan.puts.length);
 
 const indexWritten = (await check(index)) !== "match";
 

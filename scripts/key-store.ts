@@ -3,11 +3,14 @@
 // a request whose path is a key of the store and answers every other path with
 // 404, so a deploy keeps the store equal to the paths of its objects.
 //
-// A deploy syncs the store in this order: upload the objects, add the new
-// keys (putStoreKeys), clear the cache of the distribution, then delete the
-// keys that the deploy no longer serves (deleteStoreKeys), and check the store
-// against the expected key set (storeDifferences). So a path is never in the
-// store before its object exists, and a cached object never outlives its key.
+// A deploy syncs the store in this order: upload the objects that nothing
+// refers to yet, add the new keys (putStoreKeys), wait until the edges have
+// them (waitForPropagation), upload what refers to them (pages, index.json),
+// clear the cache of the distribution, then delete the keys that the deploy no
+// longer serves (deleteStoreKeys), and check the store against the expected
+// key set (storeDifferences). So a path is never in the store before its
+// object exists, no edge serves a reference to a path that it would reject,
+// and a cached object never outlives its key.
 
 import {
   type CloudFrontKeyValueStoreClient,
@@ -25,6 +28,22 @@ const LIST_PAGE = 50;
 
 // The edge function only tests whether a key exists.
 const VALUE = "1";
+
+/**
+ * Time for a store change to reach every edge location. AWS publishes no
+ * figure; changes are reported to arrive within seconds to a few tens of
+ * seconds, and a request that comes first is rejected with 404.
+ */
+export const PROPAGATION_WAIT_MS = 60_000;
+
+/** Wait until added keys have reached every edge location; return at once when no key was added. */
+export async function waitForPropagation(added: number): Promise<void> {
+  if (added === 0) {
+    return;
+  }
+  console.error(`waiting ${PROPAGATION_WAIT_MS / 1000} s until the edges have the new keys`);
+  await Bun.sleep(PROPAGATION_WAIT_MS);
+}
 
 /** Read every key of a key store, one page after another. */
 export async function readStoreKeys(client: CloudFrontKeyValueStoreClient, arn: string): Promise<Set<string>> {

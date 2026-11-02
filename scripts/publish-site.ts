@@ -2,14 +2,14 @@
 //
 // Usage: bun scripts/publish-site.ts [--dist <dir>]
 //
-// Each file goes to the bucket root under its object key (scripts/site-objects.ts):
-// `index` for `/`, `<dir>/` for a page, `404` for the 404 page, and every other
-// file at its path. Static files go before pages. Objects of earlier deploys
-// stay, so a page that a browser or CloudFront still holds keeps working.
+// Each file goes to the bucket root under its path in dist/. Objects of earlier
+// deploys stay, so a page that a browser or CloudFront still holds keeps working.
 //
 // The key store of the host holds the URL path of every object that the host
-// serves. The deploy adds the paths of this build, clears the cache, then
-// deletes the paths that this build no longer has, except those of the
+// serves (scripts/key-store.ts). The deploy uploads the static files, adds the
+// paths of this build, waits until the edges have them, uploads the pages, and
+// clears the cache, so no edge serves a page whose static files it would reject.
+// Then it deletes the paths that this build no longer has, except those of the
 // versioned static folders (static-<hash>/), whose objects stay in the bucket.
 // It fails when the store then differs from the expected key set.
 //
@@ -24,9 +24,9 @@
 import { join, resolve } from "node:path";
 
 import { cloudFrontClient, invalidateAll, keyStoreClient, requireEnv, s3Client } from "./aws.ts";
-import { deleteStoreKeys, planStoreSync, putStoreKeys, readStoreKeys, storeDifferences } from "./key-store.ts";
+import { deleteStoreKeys, planStoreSync, putStoreKeys, readStoreKeys, storeDifferences, waitForPropagation } from "./key-store.ts";
 import { pageStoreKeys } from "./site-objects.ts";
-import { JOBS, buildFiles, uploadBuild } from "./site-upload.ts";
+import { JOBS, buildFiles, uploadBuild, uploadSteps } from "./site-upload.ts";
 
 const args = Bun.argv.slice(2);
 
@@ -50,13 +50,19 @@ const expected = pageStoreKeys(files);
 
 const current = await readStoreKeys(keyStore, store);
 
-console.error(`uploading ${files.length} files to s3://${bucket}/`);
-await uploadBuild({ client: s3, dist: DIST, files, bucket, prefix: "", key: (file) => file });
-
 const plan = planStoreSync(current, expected, (key) => key.startsWith("/static-"));
+
+const [staticFiles = [], pages = []] = uploadSteps(files);
+
+console.error(`uploading ${staticFiles.length} static files to s3://${bucket}/`);
+await uploadBuild({ client: s3, dist: DIST, files: staticFiles, bucket, prefix: "", key: (file) => file });
 
 console.error(`adding ${plan.puts.length} keys to the key store`);
 await putStoreKeys(keyStore, store, plan.puts);
+await waitForPropagation(plan.puts.length);
+
+console.error(`uploading ${pages.length} pages to s3://${bucket}/`);
+await uploadBuild({ client: s3, dist: DIST, files: pages, bucket, prefix: "", key: (file) => file });
 
 await invalidateAll(cloudFrontClient(), distribution);
 
