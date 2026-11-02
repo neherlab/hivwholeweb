@@ -45,9 +45,10 @@ By default, the local site reads its data from the production data host. With `H
 2. Replace each marker such as `<!-- include nav -->` in a page with the part `src/_partials/nav.html`: the navigation bar and the shared page head live in one file each.
 3. Point every data URL of the pages and scripts (`/api/data/`, `/static/data/`, `/static/eti/data/`) to the data host.
 4. Apply the analytics setting: write the domain into the Plausible tag of each page, or remove the tag.
-5. Move `static/` to `static-<hash>/`, where `<hash>` follows the content of the static files, and rewrite every reference to it.
-6. For `--preview`, write a `robots.txt` that disallows all crawling.
-7. Check the result: the build fails on a leftover include marker, a link that names no file of the build, an unversioned `/static/` reference, a same-host data URL, a stylesheet, font, or script from another host (except the analytics script when analytics is on), a text file over 10 MB, which CloudFront would not compress, and a file path that the key store cannot hold ([Key stores](hosting.md#key-stores)).
+5. Leave out the files of the vendor packages in `static/components/` that no page, stylesheet, or script loads, directly or through another vendor file: their sources, docs, and unminified copies.
+6. Move `static/` to `static-<hash>/`, where `<hash>` follows the content of the static files, and rewrite every reference to it.
+7. For `--preview`, write a `robots.txt` that disallows all crawling.
+8. Check the result: the build fails on a leftover include marker, a link that names no file of the build, an unversioned `/static/` reference, a same-host data URL, a stylesheet, font, or script from another host (except the analytics script when analytics is on), a text file over 10 MB, which CloudFront would not compress, and a file path that the key store cannot hold ([Key stores](hosting.md#key-stores)).
 
 Local, preview, and production builds differ only in their settings:
 

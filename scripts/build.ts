@@ -5,9 +5,11 @@
 //   2. Insert the shared page parts at the include markers (scripts/includes.ts).
 //   3. Point the data URLs of pages and scripts to the data host (scripts/data-urls.ts).
 //   4. Apply the analytics setting (scripts/analytics.ts).
-//   5. Move static/ to static-<hash>/ and rewrite the references to it (scripts/static-version.ts).
-//   6. For previews, write a robots.txt that disallows all crawling.
-//   7. Check the result (scripts/build-checks.ts), then write it to a new folder
+//   5. Leave out the vendor files of static/components/ that no file of the build
+//      loads (scripts/vendor-files.ts).
+//   6. Move static/ to static-<hash>/ and rewrite the references to it (scripts/static-version.ts).
+//   7. For previews, write a robots.txt that disallows all crawling.
+//   8. Check the result (scripts/build-checks.ts), then write it to a new folder
 //      that replaces dist/, so that a server of dist/ never sees half a build.
 
 import { mkdir, rename, rm } from "node:fs/promises";
@@ -18,6 +20,7 @@ import { checkBuild } from "./build-checks.ts";
 import { rewriteDataUrls } from "./data-urls.ts";
 import { PARTIALS_DIR, insertPartials, partialText } from "./includes.ts";
 import { pageUrl, rewriteQuotedStatic, rewriteRelativeStatic, staticFolder } from "./static-version.ts";
+import { withoutUnusedVendorFiles } from "./vendor-files.ts";
 
 const PREVIEW_ROBOTS = "User-agent: *\nDisallow: /\n";
 
@@ -33,7 +36,7 @@ export async function buildSite(options: BuildOptions): Promise<Build> {
   return build;
 }
 
-/** Apply build steps 2 to 6 to the files of src/ (paths relative to src/, with the parts under `_partials/`). */
+/** Apply build steps 2 to 7 to the files of src/ (paths relative to src/, with the parts under `_partials/`). */
 export function transformSite(source: ReadonlyMap<string, Uint8Array>, settings: BuildSettings): Build {
   const dataUrl = checkedDataUrl(settings.dataUrl);
   const decoder = new TextDecoder();
@@ -52,7 +55,7 @@ export function transformSite(source: ReadonlyMap<string, Uint8Array>, settings:
   const pages = applyAnalytics(new Map([...withData].filter(([name]) => name.endsWith(".html"))), settings.plausibleDomain);
   const transformed = new Map([...withData, ...pages]);
 
-  const encoded = new Map([...files, ...[...transformed].map(([name, text]) => [name, encoder.encode(text)] as const)]);
+  const encoded = withoutUnusedVendorFiles(new Map([...files, ...[...transformed].map(([name, text]) => [name, encoder.encode(text)] as const)]));
   const folder = staticFolder(
     [...encoded].filter(([name]) => name.startsWith("static/")).map(([name, bytes]) => ({ path: name.slice("static/".length), bytes })),
   );
