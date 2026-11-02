@@ -11,7 +11,7 @@
 #
 # Environment:
 #   DEV_PUBLISH   Port to publish on 127.0.0.1, for `dev/dev just serve`
-#   AWS_*, PREVIEWS_NEHERLAB_CLICK_*, HIVWHOLEWEB_DATA_AWS_*, HIVWHOLEWEB_DATA_URL,
+#   AWS_*, PREVIEWS_NEHERLAB_CLICK_*, HIVWHOLEWEB_SITE_AWS_*, HIVWHOLEWEB_DATA_AWS_*, HIVWHOLEWEB_DATA_URL,
 #   HIVWHOLEWEB_PLAUSIBLE_DOMAIN
 #                 Forwarded when set, for the build and the uploads (.env.example)
 #
@@ -61,7 +61,7 @@ if [[ -d "${data_dir}" ]]; then
 fi
 while IFS= read -r name; do
   flags+=(--env="${name}")
-done < <(compgen -e | grep -E '^(AWS_|PREVIEWS_NEHERLAB_CLICK_|HIVWHOLEWEB_DATA_AWS_|HIVWHOLEWEB_DATA_URL$|HIVWHOLEWEB_PLAUSIBLE_DOMAIN$)' || true)
+done < <(compgen -e | grep -E '^(AWS_|PREVIEWS_NEHERLAB_CLICK_|HIVWHOLEWEB_SITE_AWS_|HIVWHOLEWEB_DATA_AWS_|HIVWHOLEWEB_DATA_URL$|HIVWHOLEWEB_PLAUSIBLE_DOMAIN$)' || true)
 if [[ -n "${DEV_PUBLISH:-}" ]]; then
   flags+=(--publish="127.0.0.1:${DEV_PUBLISH}:${DEV_PUBLISH}" --env="PORT=${DEV_PUBLISH}" --env="HOST=0.0.0.0")
 fi
